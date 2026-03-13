@@ -111,5 +111,10 @@ flowchart TD
 
     DataDeveloper-repositories-->DataTest
 
-    Test-Unit-or-Integration--push-->GithubPush
+    APITest--push-->GithubPush
+
+    BackendTest--push-->GithubPush
+
+    DataTest--push-->GithubPush
+    
 ```
