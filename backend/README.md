@@ -360,3 +360,175 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         <td>Deletes the group</td>
     </tr>
 </table>
+
+
+
+### Layouts
+#### Base Path /api/layouts
+<table>
+    <tr>
+        <th>Method</th>
+        <th>API Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/layouts</td>
+        <td>Returns all layouts</td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/layouts</td>
+        <td>Creates a new layout.</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/layouts/{id}</td>
+        <td>Returns a layout and all its slots with their assigned modules. Fully resolved.</td>
+    </tr>
+    <tr>
+        <td>PUT</td><td>/api/layouts/{id}</td>
+        <td>Updates the layout info.</td>
+    </tr>
+    <tr>
+        <td>DELETE</td><td>/api/layouts/{id}</td>
+        <td>Deletes the layout.</td>
+    </tr>
+</table>
+
+
+### Layout Slots
+#### Base Path /api/layouts/{id}/slots
+<table>
+    <tr>
+        <th>Method</th>
+        <th>API Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/layouts/{id}/slots</td>
+        <td>Returns all layout slots</td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/layouts/{id}/slots</td>
+        <td>Add a new layout slot</td>
+    </tr>
+    <tr>
+        <td>PUT</td><td>/api/layouts/{id}/slots/{slotId}</td>
+        <td>Updates a layout slot</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/layouts/{id}/slots/{slotId}</td>
+        <td>Deletes a slot from the layout.</td>
+    </tr>
+</table>
+
+
+##### JSON Request and Response
+
+<details>
+    <summary><b>GET</b> /api/layouts/1/slots</summary>
+    
+    RESPONSE 200
+
+    [
+
+        {
+            "id": 1,
+            "layoutId": 1,
+            "moduleId": 1,
+            "gridCol": 1,
+            "gridRow": 1,
+            "colSpan": 1,
+            "rowSpan": 1,
+            "zIndex": 1
+        },
+        {
+            "id": 2,
+            "layoutId": 2,
+            "moduleId": 2,
+            "gridCol": 2,
+            "gridRow": 1,
+            "colSpan": 1,
+            "rowSpan": 1,
+            "zIndex": 1
+        }
+
+    ]
+
+</details>
+
+
+<details>
+    <summary><b>POST</b> /api/layouts/1/slots</summary>
+
+    REQUEST
+    {
+        "layoutId": 1,
+        "moduleId": 1,
+        "gridCol": 1,
+        "gridRow": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1
+
+    }
+
+    RESPONSE 201
+
+    {
+        "id": 1,
+        "layoutId": 1,
+        "moduleId": 1,
+        "gridCol": 1,
+        "gridRow": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1
+    }
+
+</details>
+
+
+
+
+<details>
+    <summary><b>PUT</b> /api/layouts/1/slots/{slotId}</summary>
+
+    REQUEST
+    {
+        "layoutId": 1,
+        "moduleId": 2,      //updated
+        "gridCol": 1,
+        "gridRow": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1
+
+    }
+
+    RESPONSE 200
+
+    {
+        "id": 1,
+        "layoutId": 1,
+        "moduleId": 2,
+        "gridCol": 1,
+        "gridRow": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1
+    }
+
+</details>
+
+
+
+<details>
+    <summary><b>DELETE</b> /api/layouts/1/slots/{slotId}</summary>
+
+
+    RESPONSE 200
+
+    {
+        "message": "Layout slot deleted successfully."
+    }
+
+</details>
