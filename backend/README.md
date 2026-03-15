@@ -414,7 +414,29 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
                         "col": 2,           // total number of columns
                         "row": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
-                        "updatedAt": "2026-03-15T02:13:45:00Z"
+                        "updatedAt": "2026-03-15T02:13:45:00Z",
+                        "layoutSlots": [
+                                            {
+                                                "id": 1,
+                                                "layoutId": 1,
+                                                "moduleId": 1,
+                                                "gridCol": 1,
+                                                "gridRow": 1,
+                                                "colSpan": 1,
+                                                "rowSpan": 1,
+                                                "zIndex": 1
+                                            },
+                                            {
+                                                "id": 2,
+                                                "layoutId": 2,
+                                                "moduleId": 2,
+                                                "gridCol": 2,
+                                                "gridRow": 1,
+                                                "colSpan": 1,
+                                                "rowSpan": 1,
+                                                "zIndex": 1
+                                            }
+                                    ]
                     },
             
                     {
@@ -423,7 +445,8 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
                         "col": 2,           // total number of columns
                         "row": 3,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
-                        "updatedAt": "2026-03-15T02:13:45:00Z"
+                        "updatedAt": "2026-03-15T02:13:45:00Z",
+                        "layoutSlots": []
                     },
                 ],
         "errors":[]
@@ -511,7 +534,29 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
                     "col": 2,           // total number of columns
                     "row": 2,           // total number of rows
                     "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T02:45:45:00Z"
+                    "updatedAt": "2026-03-15T02:45:45:00Z",
+                    "layoutSlots": [
+                                        {
+                                            "id": 1,
+                                            "layoutId": 1,
+                                            "moduleId": 1,
+                                            "gridCol": 1,
+                                            "gridRow": 1,
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "zIndex": 1
+                                        },
+                                        {
+                                            "id": 2,
+                                            "layoutId": 2,
+                                            "moduleId": 2,
+                                            "gridCol": 2,
+                                            "gridRow": 1,
+                                            "colSpan": 1,
+                                            "rowSpan": 1,
+                                            "zIndex": 1
+                                        }
+                                ]
                 },
         "errors":[]
     }
@@ -866,7 +911,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
                     "gridRow": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
-                    "zIndex": 1
+                    "zIndex": 1,
                 },
         "errors":[]
     }
