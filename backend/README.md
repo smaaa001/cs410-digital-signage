@@ -7,7 +7,7 @@ flowchart TD
 
 
     Entity(<b>Entity</b><br/>DB Object)
-        
+
     DTO(<b>DTO</b><br/>Transfers required data only)
 
 
@@ -26,14 +26,14 @@ flowchart TD
         subgraph DatabaseLayer
             direction LR
             D(<b>Repository</b><br/>DB Queries) <-->Database(<b>Database</b>)
-            
+
 
 
             D-.->|Uses|Entity
         end
 
         APILayer <-->ServiceLayer
-       
+
 
         ServiceLayer <-->DatabaseLayer
 
@@ -138,8 +138,8 @@ The initial setup needs to be done first. All backend developers must agree on t
 
 **Note:**
 
--The API developer can only use DTOs. 
--The backend developer can use both DTOs and entities in their development. 
+-The API developer can only use DTOs.
+-The backend developer can use both DTOs and entities in their development.
 -The data developer will only rely on the entities.
 
 **Testing:**
@@ -326,5 +326,37 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
     <tr>
         <td>DELETE</td><td>/api/devices/{id}</td>
         <td>Delete a device from the system.</td>
+    </tr>
+</table>
+
+
+
+### DeviceGroups
+#### Base Path /api/device-groups
+<table>
+    <tr>
+        <th>Method</th>
+        <th>API Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/device-groups</td>
+        <td>Returns all device groups with their assigned layout and device count.</td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/device-groups</td>
+        <td>Creates a new device group</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/device-groups/{id}</td>
+        <td>Returns a single device group with their assigned layout and device count.</td>
+    </tr>
+    <tr>
+        <td>PUT</td><td>/api/device-groups/{id}</td>
+        <td>Updates group name or description</td>
+    </tr>
+    <tr>
+        <td>DELETE</td><td>/api/device-groups/{id}</td>
+        <td>Deletes the group</td>
     </tr>
 </table>
