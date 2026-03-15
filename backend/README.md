@@ -394,6 +394,42 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 </table>
 
 
+
+
+##### JSON Request and Response
+
+<details>
+    <summary><b>GET</b> /api/layouts/1/slots</summary>
+
+    RESPONSE 200
+
+    [
+
+        {
+            "id": 1,
+            "name": "Campus Center Default",
+            "col": 2,           // total number of columns
+            "row": 1,           // total number of rows
+            "deviceGroupId": 1,
+            "createdAt": "2026-03-15T02:13:45:00Z",
+            "updatedAt": "2026-03-15T02:13:45:00Z"
+        },
+
+        {
+            "id": 2,
+            "name": "Test Layout",
+            "col": 2,           // total number of columns
+            "row": 3,           // total number of rows
+            "deviceGroupId": 1,
+            "createdAt": "2026-03-15T02:13:45:00Z",
+            "updatedAt": "2026-03-15T02:13:45:00Z"
+        },
+    ]
+
+</details>
+
+
+
 ### Layout Slots
 #### Base Path /api/layouts/{id}/slots
 <table>
