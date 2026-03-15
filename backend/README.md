@@ -201,7 +201,6 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         VARCHAR(50) name
         INT col
         INT row
-        BIGINT DeviceGroupId fk
         DATETIME createdAt
         DATETIME updatedAt
     }
@@ -400,7 +399,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 ##### JSON Request and Response
 
 <details>
-    <summary><b>GET</b> /api/layouts/1/slots</summary>
+    <summary><b>GET</b> /api/layouts</summary>
 
     RESPONSE 200
 
@@ -411,7 +410,6 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
             "name": "Campus Center Default",
             "col": 2,           // total number of columns
             "row": 1,           // total number of rows
-            "deviceGroupId": 1,
             "createdAt": "2026-03-15T02:13:45:00Z",
             "updatedAt": "2026-03-15T02:13:45:00Z"
         },
@@ -421,7 +419,6 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
             "name": "Test Layout",
             "col": 2,           // total number of columns
             "row": 3,           // total number of rows
-            "deviceGroupId": 1,
             "createdAt": "2026-03-15T02:13:45:00Z",
             "updatedAt": "2026-03-15T02:13:45:00Z"
         },
@@ -429,6 +426,85 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 </details>
 
+
+<details>
+    <summary><b>POST</b> /api/layouts</summary>
+    
+    REQUEST
+    
+    {
+        "name": "Another Layout",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+    }
+
+    RESPONSE 201
+
+    {
+        "id": 3,
+        "name": "Anohter Layout",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+        "createdAt": "2026-03-15T02:45:45:00Z",
+        "updatedAt": "2026-03-15T02:45:45:00Z"
+    }
+
+</details>
+
+
+<details>
+    <summary><b>GET</b> /api/layouts/3</summary>
+
+    RESPONSE 200
+
+    {
+        "id": 3,
+        "name": "Anohter Layout",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+        "createdAt": "2026-03-15T02:45:45:00Z",
+        "updatedAt": "2026-03-15T02:45:45:00Z"
+    }
+
+</details>
+
+
+
+<details>
+    <summary><b>PUT</b> /api/layouts/3</summary>
+    
+    REQUEST
+        {
+            "name": "Updated Layout Name",
+            "col": 2,
+            "row": 2
+        }
+
+    RESPONSE 200
+
+    {
+        "id": 3,
+        "name": "Updated Layout Name",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+        "createdAt": "2026-03-15T02:45:45:00Z",
+        "updatedAt": "2026-03-15T03:10:45:00Z"
+    }
+
+</details>
+
+
+<details>
+    <summary><b>DELETE</b> /api/layouts/3</summary>
+
+
+    RESPONSE 200
+
+    {
+        "message": "Layout deleted successfully."
+    }
+
+</details>
 
 
 ### Layout Slots
