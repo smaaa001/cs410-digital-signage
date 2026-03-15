@@ -70,7 +70,7 @@ flowchart TD
             DTO3(<b>DTO</b><br/>Transfers required data only.)
             Service3(<b>Service Interface</b><br/>Define service contracts. Uses Dto and Entity)
             Service3Impl(<b>Service Implemenation</b><br/>Implements service interfaces. Define business logic. Uses Dto and Entity)
-        
+
             Service3Impl-.->|Implements|Service3
             Service3Impl-.->|uses|Entity3
             Service3Impl-.->|uses|DTO3
@@ -81,7 +81,7 @@ flowchart TD
         subgraph DataDeveloper-repositories
             Entity4(<b>Entity</b><br/>DB Object.)
             Repository4(<b>Respository Interface</b><br/>Define database contracts. Uses Entity)
-            
+
             Repository4-.->|uses|Entity4
         end
     end
@@ -94,7 +94,7 @@ flowchart TD
         end
         subgraph BackendTest
             ServiceImplTest(<b>ServiceImplTest</b><br/>Test service implementations)
-        
+
         end
         subgraph DataTest
             RepositoryTest(<b>RepositoryTest</b><br/>Test database persistency.)
@@ -116,7 +116,7 @@ flowchart TD
     BackendTest--push-->GithubPush
 
     DataTest--push-->GithubPush
-    
+
 ```
 
 
@@ -156,8 +156,12 @@ Every time someone does a pull request, run all the tests! Even though some test
 
 ```mermaid
 erDiagram
+Device ||--|| Layout : "uses Layout. 
+                        if DeviceGroup.layoutId <> NULL 
+                        THEN show this layout
+                        ELSE override with layout from DeviceGroup"
 DeviceGroup ||--o{ Device : has
-DeviceGroup ||--o{ Layout : uses
+DeviceGroup }|--o| Layout : uses
 Layout ||--o{ LayoutSlot : contains
 LayoutSlot }o--|| Module : displays
 AdCollection ||--|{ AdContent : has
@@ -174,6 +178,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
     DeviceGroup {
         BIGINT id pk
+        BIGINT layoutId fk
         VARCHAR(50) name
         VARCHAR(255) description
         DATETIME createdAt
@@ -182,6 +187,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
     Device {
         BIGINT id pk
+        BIGINT layoutId fk
         VARCHAR(50) name
         VARCHAR(50) pairingId
         ENUM status "ONLINE | OFFLINE"
@@ -304,10 +310,6 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         <td>Verify device status (online | offline).</td>
     </tr>
     <tr>
-        <td>GET</td><td>/api/devices/{id}/layout</td>
-        <td>Gets currently assigned layout to this device. This will return fully resolved layout with layout slots, module, ad collection and ad contents</td>
-    </tr>
-    <tr>
         <td>GET</td><td>/api/devices</td>
         <td>Returns list of all devices with their name, status, group.</td>
     </tr>
@@ -353,14 +355,13 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
     </tr>
     <tr>
         <td>PUT</td><td>/api/device-groups/{id}</td>
-        <td>Updates group name or description</td>
+        <td>Updates group name or description. Assigns or unassigns a layout.</td>
     </tr>
     <tr>
         <td>DELETE</td><td>/api/device-groups/{id}</td>
         <td>Deletes the group</td>
     </tr>
 </table>
-
 
 
 ### Layouts
