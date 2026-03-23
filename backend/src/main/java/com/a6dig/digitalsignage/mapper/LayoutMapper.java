@@ -1,0 +1,47 @@
+package com.a6dig.digitalsignage.mapper;
+
+import com.a6dig.digitalsignage.dto.LayoutResponseDto;
+import com.a6dig.digitalsignage.dto.LayoutSlotResponseDto;
+import com.a6dig.digitalsignage.entity.Layout;
+import com.a6dig.digitalsignage.entity.LayoutSlot;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
+@Component
+public class LayoutMapper {
+    public LayoutResponseDto toLayoutResponseDto(Layout layout) {
+        LayoutResponseDto dto = new LayoutResponseDto();
+        dto.setId(layout.getId());
+        dto.setName(layout.getName());
+        dto.setLayoutCol(layout.getLayoutCol());
+        dto.setLayoutRow(layout.getLayoutRow());
+        dto.setCreatedAt(layout.getCreatedAt());
+        dto.setUpdatedAt(layout.getUpdatedAt());
+
+        dto.setLayoutSlotList(
+                layout.getLayoutSlotList() == null ? new ArrayList<>()
+                        : layout.getLayoutSlotList()
+                        .stream()
+                        .map(this::toLayoutSlotResponseDto)
+                        .collect(Collectors.toList())
+        );
+        return dto;
+    }
+
+
+    public LayoutSlotResponseDto toLayoutSlotResponseDto(LayoutSlot slot) {
+        LayoutSlotResponseDto dto = new LayoutSlotResponseDto();
+        dto.setId(slot.getId());
+        dto.setLayoutId(slot.getLayout().getId());
+        dto.setModuleId(slot.getModuleId());
+        dto.setGridCol(slot.getGridCol());
+        dto.setGridRow(slot.getGridRow());
+        dto.setColSpan(slot.getColSpan());
+        dto.setRowSpan(slot.getRowSpan());
+        dto.setCreatedAt(slot.getCreatedAt());
+        dto.setUpdatedAt(slot.getUpdatedAt());
+        return dto;
+    }
+}
