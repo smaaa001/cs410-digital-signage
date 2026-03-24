@@ -53,7 +53,7 @@ public class LayoutServiceImpl implements LayoutService{
     }
 
     @Override
-    public LayoutResponseDto createLayout(LayoutRequestDto dto) {
+    public LayoutResponseDto createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
 
@@ -103,7 +103,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayout(Long id, LayoutRequestDto dto) {
+    public LayoutResponseDto updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
 
@@ -133,6 +133,24 @@ public class LayoutServiceImpl implements LayoutService{
         layout.setName(dto.getName());
         layout.setCols(dto.getCols());
         layout.setRows(dto.getRows());
+
+
+
+
+        if(dto.getSlots() != null) {
+            for(LayoutSlotRequestUpdateDto s : dto.getSlots()) {
+                LayoutSlot slot = new LayoutSlot(layout);
+                slot.setId(s.getId());
+                slot.setModuleId(s.getModuleId());
+                slot.setColPos(s.getColPos());
+                slot.setRowPos(s.getRowPos());
+                slot.setColSpan(s.getColSpan());
+                slot.setRowSpan(s.getRowSpan());
+                slot.setzIndex(s.getzIndex());
+
+                layout.addLayoutSlot(slot);
+            }
+        }
 
         Layout updated = layoutRepository.saveAndFlush(layout);
         return layoutMapper.toLayoutResponseDto(updated);
