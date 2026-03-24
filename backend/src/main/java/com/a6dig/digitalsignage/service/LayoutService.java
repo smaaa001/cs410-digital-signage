@@ -12,10 +12,10 @@ public interface LayoutService {
 
 
     // POST
-    LayoutResponseDto createLayout(LayoutRequestDto dto);
+    LayoutResponseDto createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto);
 
     // PUT
-    LayoutResponseDto updateLayout(Long id, LayoutRequestDto dto);
+    LayoutResponseDto updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto);
     LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots);
 
     // DELETE

@@ -2,12 +2,12 @@ package com.a6dig.digitalsignage.dto;
 
 import java.util.List;
 
-public class LayoutRequestDto {
+public class LayoutRequestDto<T extends LayoutSlotRequestDto> {
     private String name;
     private int cols;
     private int rows;
 
-    private List<LayoutSlotRequestDto> slots;
+    private List<T> slots;
 
 
     public String getName() {
@@ -34,11 +34,11 @@ public class LayoutRequestDto {
         this.rows = rows;
     }
 
-    public List<LayoutSlotRequestDto> getSlots() {
+    public List<T> getSlots() {
         return slots;
     }
 
-    public void setSlots(List<LayoutSlotRequestDto> slots) {
+    public void setSlots(List<T> slots) {
         this.slots = slots;
     }
 }
