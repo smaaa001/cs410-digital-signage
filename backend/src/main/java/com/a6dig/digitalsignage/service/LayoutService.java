@@ -10,14 +10,13 @@ public interface LayoutService {
     LayoutResponseDto getLayoutById(Long id);
     List<LayoutResponseDto> getAllLayouts();
 
-    List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId);
 
     // POST
     LayoutResponseDto createLayout(LayoutRequestDto dto);
 
     // PUT
-    LayoutResponseDto updateLayout(Long id, LayoutRequestUpdateDto dto);
-    LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestUpdateDto> slots);
+    LayoutResponseDto updateLayout(Long id, LayoutRequestDto dto);
+    LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots);
 
     // DELETE
     void deleteLayout(Long id);
@@ -33,4 +32,7 @@ public interface LayoutService {
     // Misc
     boolean layoutExist(Long id);
     long layoutCount();
+
+
+    List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId);
 }

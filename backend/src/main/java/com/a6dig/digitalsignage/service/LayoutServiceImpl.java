@@ -53,26 +53,21 @@ public class LayoutServiceImpl implements LayoutService{
     }
 
     @Override
-    public List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId) {
-        return layoutSlotRepository.getAllLayoutSlotsByLayoutId(layoutId).stream().map(layoutMapper::toLayoutSlotResponseDto).collect(Collectors.toList());
-    }
-
-    @Override
     public LayoutResponseDto createLayout(LayoutRequestDto dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
 
         // validation
-        if(dto.getLayoutCol() < 0) {
+        if(dto.getCols() < 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
         }
-        if(dto.getLayoutRow() < 0) {
+        if(dto.getRows() < 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
         }
-        if(dto.getLayoutCol() == 0) {
+        if(dto.getCols() == 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
         }
-        if(dto.getLayoutRow() == 0) {
+        if(dto.getRows() == 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
         }
 
@@ -82,17 +77,17 @@ public class LayoutServiceImpl implements LayoutService{
 
         Layout layout = new Layout();
         layout.setName(dto.getName());
-        layout.setLayoutCol(dto.getLayoutCol());
-        layout.setLayoutRow(dto.getLayoutRow());
-        layout.setLayoutSlotList(new ArrayList<>());
+        layout.setCols(dto.getCols());
+        layout.setRows(dto.getRows());
+        layout.setSlots(new ArrayList<>());
 
 
-        if(dto.getLayoutSlotRequestDtoList() != null) {
-            for(LayoutSlotRequestDto s : dto.getLayoutSlotRequestDtoList()) {
+        if(dto.getSlots() != null) {
+            for(LayoutSlotRequestDto s : dto.getSlots()) {
                 LayoutSlot slot = new LayoutSlot(layout);
                 slot.setModuleId(null);
-                slot.setGridCol(s.getGridCol());
-                slot.setGridRow(s.getGridRow());
+                slot.setColPos(s.getColPos());
+                slot.setRowPos(s.getRowPos());
                 slot.setColSpan(s.getColSpan());
                 slot.setRowSpan(s.getRowSpan());
                 slot.setzIndex(s.getzIndex());
@@ -108,21 +103,21 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayout(Long id, LayoutRequestUpdateDto dto) {
+    public LayoutResponseDto updateLayout(Long id, LayoutRequestDto dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
 
         // validation
-        if(dto.getLayoutCol() < 0) {
+        if(dto.getCols() < 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
         }
-        if(dto.getLayoutRow() < 0) {
+        if(dto.getRows() < 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
         }
-        if(dto.getLayoutCol() == 0) {
+        if(dto.getCols() == 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
         }
-        if(dto.getLayoutRow() == 0) {
+        if(dto.getRows() == 0) {
             errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
         }
 
@@ -136,8 +131,8 @@ public class LayoutServiceImpl implements LayoutService{
                         ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
                 ));
         layout.setName(dto.getName());
-        layout.setLayoutCol(dto.getLayoutCol());
-        layout.setLayoutRow(dto.getLayoutRow());
+        layout.setCols(dto.getCols());
+        layout.setRows(dto.getRows());
 
         Layout updated = layoutRepository.saveAndFlush(layout);
         return layoutMapper.toLayoutResponseDto(updated);
@@ -145,7 +140,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestUpdateDto> slots) {
+    public LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots) {
 
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(
@@ -153,13 +148,13 @@ public class LayoutServiceImpl implements LayoutService{
                         ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
                 ));
 
-        layout.getLayoutSlotList().clear();
+        layout.getSlots().clear();
 
-        for (LayoutSlotRequestUpdateDto s : slots) {
+        for (LayoutSlotRequestDto s : slots) {
             LayoutSlot slot = new LayoutSlot(layout);
             slot.setModuleId(s.getModuleId());
-            slot.setGridCol(s.getGridCol());
-            slot.setGridRow(s.getGridRow());
+            slot.setColPos(s.getColPos());
+            slot.setRowPos(s.getRowPos());
             slot.setColSpan(s.getColSpan());
             slot.setRowSpan(s.getRowSpan());
             slot.setzIndex(s.getzIndex());
@@ -201,8 +196,8 @@ public class LayoutServiceImpl implements LayoutService{
 
         LayoutSlot slot = new LayoutSlot(layout);
         slot.setModuleId(dto.getModuleId());
-        slot.setGridCol(dto.getGridCol());
-        slot.setGridRow(dto.getGridRow());
+        slot.setColPos(dto.getColPos());
+        slot.setRowPos(dto.getRowPos());
         slot.setColSpan(dto.getColSpan());
         slot.setRowSpan(dto.getRowSpan());
         slot.setzIndex(dto.getzIndex());
@@ -237,7 +232,7 @@ public class LayoutServiceImpl implements LayoutService{
             throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_INVALID_LAYOUT_ID, errors);
         }
 
-        layout.getLayoutSlotList().removeIf(s -> s.getId().equals(slotId));
+        layout.getSlots().removeIf(s -> s.getId().equals(slotId));
         Layout updated = layoutRepository.save(layout);
 
         return layoutMapper.toLayoutResponseDto(updated);
@@ -252,5 +247,13 @@ public class LayoutServiceImpl implements LayoutService{
     @Override
     public long layoutCount() {
         return layoutRepository.count();
+    }
+
+
+    // layout slots
+
+    @Override
+    public List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId) {
+        return layoutSlotRepository.getAllLayoutSlotsByLayoutId(layoutId).stream().map(layoutMapper::toLayoutSlotResponseDto).collect(Collectors.toList());
     }
 }
