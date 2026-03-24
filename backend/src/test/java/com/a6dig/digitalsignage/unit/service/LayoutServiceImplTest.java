@@ -68,8 +68,8 @@ class LayoutServiceImplTest {
 
 
 
-    private LayoutRequestDto buildLayoutRequestDto(String name, int col, int row) {
-        LayoutRequestDto dto = new LayoutRequestDto();
+    private <T extends LayoutSlotRequestDto>LayoutRequestDto<T> buildLayoutRequestDto(String name, int col, int row) {
+        LayoutRequestDto<T> dto = new LayoutRequestDto<>();
         dto.setName(name);
         dto.setCols(col);
         dto.setRows(row);
@@ -206,7 +206,7 @@ class LayoutServiceImplTest {
     // Create
     @Test
     void shouldCreateLayoutWithoutSlots(){
-        LayoutRequestDto request = this.buildLayoutRequestDto("Main Layout", 3, 1);
+        LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 3, 1);
         request.setSlots(null);
 
         Layout layout = this.buildLayout(1L, "Main Layout", 3, 1);
@@ -226,7 +226,7 @@ class LayoutServiceImplTest {
 
     @Test
     void shouldThrowErrorWhenCreateLayoutWithInvalidData(){
-        LayoutRequestDto request = this.buildLayoutRequestDto("Main Layout", 0, 1);
+        LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 0, 1);
         request.setSlots(null);
         assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(request));
 
@@ -241,7 +241,7 @@ class LayoutServiceImplTest {
         Layout updated = this.buildLayout(1L, "Updated Main Layout", 4, 2);
         LayoutResponseDto responseDto = this.buildLayoutResponseDto(1L, "Updated Main Layout", 4, 2, new ArrayList<>());
 
-        LayoutRequestDto request = this.buildLayoutRequestDto("Updated Main Layout", 4, 2);
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Updated Main Layout", 4, 2);
 
         when(layoutRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(layoutRepository.saveAndFlush(any(Layout.class))).thenReturn(updated);
@@ -259,7 +259,7 @@ class LayoutServiceImplTest {
     @Test
     void shouldThrowErrorWhenUpdateLayoutWithInvalidData(){
         Layout existing = this.buildLayout(1L, "Main Layout", 3, 3);
-        LayoutRequestDto updated = this.buildLayoutRequestDto( "Updated Main Layout", 0, 2);
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updated = this.buildLayoutRequestDto( "Updated Main Layout", 0, 2);
         assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.updateLayout(1L, updated));
 
         verify(layoutRepository, never()).save(any(Layout.class));
@@ -271,7 +271,7 @@ class LayoutServiceImplTest {
     @Test
     void shouldThrowErrorWhenUpdatingNonExistingLayout() {
 
-        LayoutRequestDto request = new LayoutRequestDto();
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> request = new LayoutRequestDto<>();
         request.setName("Updated Main Layout");
         request.setCols(4);
         request.setRows(2);
