@@ -23,9 +23,9 @@ public class LayoutSlot {
 
     private Long moduleId;
 
-    private int gridCol;
+    private int colPos;
 
-    private int gridRow;
+    private int rowPos;
 
     private int colSpan;
 
@@ -87,20 +87,20 @@ public class LayoutSlot {
         this.moduleId = moduleId;
     }
 
-    public int getGridCol() {
-        return gridCol;
+    public int getColPos() {
+        return colPos;
     }
 
-    public void setGridCol(int gridCol) {
-        this.gridCol = gridCol;
+    public void setColPos(int colPos) {
+        this.colPos = colPos;
     }
 
-    public int getGridRow() {
-        return gridRow;
+    public int getRowPos() {
+        return rowPos;
     }
 
-    public void setGridRow(int gridRow) {
-        this.gridRow = gridRow;
+    public void setRowPos(int rowPos) {
+        this.rowPos = rowPos;
     }
 
     public int getColSpan() {
