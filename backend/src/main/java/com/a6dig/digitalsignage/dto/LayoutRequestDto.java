@@ -4,10 +4,10 @@ import java.util.List;
 
 public class LayoutRequestDto {
     private String name;
-    private int layoutCol;
-    private int layoutRow;
+    private int cols;
+    private int rows;
 
-    private List<LayoutSlotRequestDto> layoutSlotRequestDtoList;
+    private List<LayoutSlotRequestDto> slots;
 
 
     public String getName() {
@@ -18,27 +18,27 @@ public class LayoutRequestDto {
         this.name = name;
     }
 
-    public int getLayoutCol() {
-        return layoutCol;
+    public int getCols() {
+        return cols;
     }
 
-    public void setLayoutCol(int layoutCol) {
-        this.layoutCol = layoutCol;
+    public void setCols(int cols) {
+        this.cols = cols;
     }
 
-    public int getLayoutRow() {
-        return layoutRow;
+    public int getRows() {
+        return rows;
     }
 
-    public void setLayoutRow(int layoutRow) {
-        this.layoutRow = layoutRow;
+    public void setRows(int rows) {
+        this.rows = rows;
     }
 
-    public List<LayoutSlotRequestDto> getLayoutSlotRequestDtoList() {
-        return layoutSlotRequestDtoList;
+    public List<LayoutSlotRequestDto> getSlots() {
+        return slots;
     }
 
-    public void setLayoutSlotRequestDtoList(List<LayoutSlotRequestDto> layoutSlotRequestDtoList) {
-        this.layoutSlotRequestDtoList = layoutSlotRequestDtoList;
+    public void setSlots(List<LayoutSlotRequestDto> slots) {
+        this.slots = slots;
     }
 }

@@ -29,8 +29,8 @@ class LayoutRepositoryTest {
     private Layout build(String name, int col, int row){
         Layout layout = new Layout();
         layout.setName(name);
-        layout.setLayoutCol(col);
-        layout.setLayoutRow(row);
+        layout.setCols(col);
+        layout.setRows(row);
         return layout;
     }
 
@@ -44,8 +44,8 @@ class LayoutRepositoryTest {
         Optional<Layout> result = layoutRepository.findById(saved.getId());
 
         assertTrue(result.isPresent());
-        assertEquals(2, result.get().getLayoutCol());
-        assertEquals(2, result.get().getLayoutRow());
+        assertEquals(2, result.get().getCols());
+        assertEquals(2, result.get().getRows());
     }
 
     @Test
@@ -89,8 +89,8 @@ class LayoutRepositoryTest {
 
         assertNotNull(saved.getId());
         assertEquals("Default Layout", saved.getName());
-        assertEquals(2, saved.getLayoutCol());
-        assertEquals(2, saved.getLayoutRow());
+        assertEquals(2, saved.getCols());
+        assertEquals(2, saved.getRows());
         assertNotNull(saved.getCreatedAt());
         assertNotNull(saved.getUpdatedAt());
     }
@@ -103,8 +103,8 @@ class LayoutRepositoryTest {
 
         assertNotNull(saved.getId());
         assertEquals("", saved.getName());
-        assertEquals(2, saved.getLayoutCol());
-        assertEquals(2, saved.getLayoutRow());
+        assertEquals(2, saved.getCols());
+        assertEquals(2, saved.getRows());
         assertNotNull(saved.getCreatedAt());
         assertNotNull(saved.getUpdatedAt());
     }
@@ -117,8 +117,8 @@ class LayoutRepositoryTest {
 
         assertNotNull(saved.getId());
         assertNull(saved.getName());
-        assertEquals(2, saved.getLayoutCol());
-        assertEquals(2, saved.getLayoutRow());
+        assertEquals(2, saved.getCols());
+        assertEquals(2, saved.getRows());
         assertNotNull(saved.getCreatedAt());
         assertNotNull(saved.getUpdatedAt());
     }
@@ -138,8 +138,8 @@ class LayoutRepositoryTest {
         assertNotNull(updated.getId());
         assertNotNull(updated.getName());
         assertEquals("Default Name", updated.getName());
-        assertEquals(2, updated.getLayoutCol());
-        assertEquals(2, updated.getLayoutRow());
+        assertEquals(2, updated.getCols());
+        assertEquals(2, updated.getRows());
         assertEquals(saved.getCreatedAt(), updated.getCreatedAt());
         assertNotEquals(updated.getCreatedAt(), updated.getUpdatedAt());
         assertNotNull(saved.getCreatedAt());
@@ -152,15 +152,15 @@ class LayoutRepositoryTest {
 
         Layout saved = layoutRepository.save(layout);
 
-        saved.setLayoutCol(3);
-        saved.setLayoutRow(3);
+        saved.setCols(3);
+        saved.setRows(3);
 
         Layout updated = layoutRepository.save(saved);
 
         assertNotNull(updated.getId());
         assertNull(updated.getName());
-        assertEquals(3, updated.getLayoutCol());
-        assertEquals(3, updated.getLayoutRow());
+        assertEquals(3, updated.getCols());
+        assertEquals(3, updated.getRows());
         assertEquals(saved.getCreatedAt(), updated.getCreatedAt());
         assertNotEquals(updated.getCreatedAt(), updated.getUpdatedAt());
         assertNotNull(saved.getCreatedAt());
