@@ -1,9 +1,8 @@
 package com.a6dig.digitalsignage.controller;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
+import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.dto.LayoutRequestDto;
-import com.a6dig.digitalsignage.dto.LayoutRequestDto;
-import com.a6dig.digitalsignage.dto.LayoutResponseDto;
 import com.a6dig.digitalsignage.service.LayoutService;
 import com.a6dig.digitalsignage.util.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class LayoutController {
     // post
 
     @PostMapping
-    public ResponseEntity<APIResponse<LayoutResponseDto>> createLayout(@RequestBody LayoutRequestDto request) {
+    public ResponseEntity<APIResponse<LayoutResponseDto>> createLayout(@RequestBody LayoutRequestDto<LayoutSlotRequestDto> request) {
         LayoutResponseDto dto = this.layoutService.createLayout(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.created(dto)
@@ -44,7 +43,7 @@ public class LayoutController {
     // update
 
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<LayoutResponseDto>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto request) {
+    public ResponseEntity<APIResponse<LayoutResponseDto>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
         LayoutResponseDto dto = this.layoutService.updateLayout(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.success(AppConstant.SuccessMessage.LAYOUT_UPDATED,dto)
