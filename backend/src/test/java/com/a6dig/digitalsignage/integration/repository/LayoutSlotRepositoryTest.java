@@ -30,8 +30,8 @@ class LayoutSlotRepositoryTest {
     private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int col, int row, int colSpan, int rowSpan){
         LayoutSlot layoutSlot = new LayoutSlot(layout);
         layoutSlot.setModuleId(moduleId);
-        layoutSlot.setGridCol(col);
-        layoutSlot.setGridRow(row);
+        layoutSlot.setColPos(col);
+        layoutSlot.setRowPos(row);
         layoutSlot.setColSpan(colSpan);
         layoutSlot.setRowSpan(rowSpan);
 
@@ -43,8 +43,8 @@ class LayoutSlotRepositoryTest {
     private Layout buildLayout(String name, int col, int row){
         Layout layout = new Layout();
         layout.setName(name);
-        layout.setLayoutCol(col);
-        layout.setLayoutRow(row);
+        layout.setCols(col);
+        layout.setRows(row);
         return layout;
     }
 
@@ -62,8 +62,8 @@ class LayoutSlotRepositoryTest {
 
         assertTrue(result.isPresent());
         assertEquals(1L, result.get().getModuleId());
-        assertEquals(2, result.get().getGridCol());
-        assertEquals(2, result.get().getGridRow());
+        assertEquals(2, result.get().getColPos());
+        assertEquals(2, result.get().getRowPos());
         assertEquals(2, result.get().getColSpan());
         assertEquals(1, result.get().getRowSpan());
     }
@@ -122,8 +122,8 @@ class LayoutSlotRepositoryTest {
 
         assertNotNull(saved.getId());
         assertEquals(1L, saved.getModuleId());
-        assertEquals(2, saved.getGridCol());
-        assertEquals(2, saved.getGridRow());
+        assertEquals(2, saved.getColPos());
+        assertEquals(2, saved.getRowPos());
         assertEquals(2, saved.getColSpan());
         assertEquals(1, saved.getRowSpan());
         assertNotNull(saved.getCreatedAt());
@@ -150,8 +150,8 @@ class LayoutSlotRepositoryTest {
 
         assertNotNull(updated.getId());
         assertEquals(2L, updated.getModuleId());
-        assertEquals(2, saved.getGridCol());
-        assertEquals(2, saved.getGridRow());
+        assertEquals(2, saved.getColPos());
+        assertEquals(2, saved.getRowPos());
         assertEquals(2, saved.getColSpan());
         assertEquals(1, saved.getRowSpan());
         assertEquals(saved.getCreatedAt(), updated.getCreatedAt());
@@ -171,16 +171,16 @@ class LayoutSlotRepositoryTest {
 
         LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
 
-        saved.setGridCol(2);
-        saved.setGridRow(3);
+        saved.setColPos(2);
+        saved.setRowPos(3);
 
         LayoutSlot updated = layoutSlotRepository.save(saved);
 
 
         assertNotNull(updated.getId());
         assertEquals(1L, updated.getModuleId());
-        assertEquals(2, saved.getGridCol());
-        assertEquals(3, saved.getGridRow());
+        assertEquals(2, saved.getColPos());
+        assertEquals(3, saved.getRowPos());
         assertEquals(2, saved.getColSpan());
         assertEquals(1, saved.getRowSpan());
         assertEquals(saved.getCreatedAt(), updated.getCreatedAt());
@@ -207,8 +207,8 @@ class LayoutSlotRepositoryTest {
 
         assertNotNull(updated.getId());
         assertEquals(1L, updated.getModuleId());
-        assertEquals(2, saved.getGridCol());
-        assertEquals(2, saved.getGridRow());
+        assertEquals(2, saved.getColPos());
+        assertEquals(2, saved.getRowPos());
         assertEquals(4, saved.getColSpan());
         assertEquals(4, saved.getRowSpan());
         assertEquals(saved.getCreatedAt(), updated.getCreatedAt());

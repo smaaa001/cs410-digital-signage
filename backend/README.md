@@ -209,8 +209,8 @@ DATETIME updatedAt
 Layout {
 BIGINT id pk
 VARCHAR(50) name
-INT col
-INT row
+INT cols
+INT rows
 DATETIME createdAt
 DATETIME updatedAt
 }
@@ -219,8 +219,8 @@ LayoutSlot {
 BIGINT id pk
 BIGINT layoutId fk
 BIGINT moduleId fk
-INT gridCol
-INT gridRow
+INT colPos
+INT rowPos
 INT colSpan
 INT rowSpan
 INT zIndex
@@ -645,8 +645,8 @@ INT durationSeconds
                                     "layout": {
                                         "id": 1,
                                         "name": "Campus Center Default",
-                                        "col": 2,           // total number of columns
-                                        "row": 1,           // total number of rows
+                                        "cols": 2,           // total number of columns
+                                        "rows": 1,           // total number of rows
                                         "createdAt": "2026-03-15T02:13:45:00Z",
                                         "updatedAt": "2026-03-15T02:13:45:00Z",
                                         "layoutSlots": [
@@ -654,8 +654,8 @@ INT durationSeconds
                                                                 "id": 1,
                                                                 "layoutId": 1,
                                                                 "moduleId": 1,
-                                                                "gridCol": 1,
-                                                                "gridRow": 1,
+                                                                "colPos": 1,
+                                                                "rowPos": 1,
                                                                 "colSpan": 1,
                                                                 "rowSpan": 1,
                                                                 "zIndex": 1
@@ -664,8 +664,8 @@ INT durationSeconds
                                                                 "id": 2,
                                                                 "layoutId": 2,
                                                                 "moduleId": 2,
-                                                                "gridCol": 2,
-                                                                "gridRow": 1,
+                                                                "colPos": 2,
+                                                                "rowPos": 1,
                                                                 "colSpan": 1,
                                                                 "rowSpan": 1,
                                                                 "zIndex": 1
@@ -740,8 +740,8 @@ INT durationSeconds
                                     "layout": {
                                         "id": 1,
                                         "name": "Campus Center Default",
-                                        "col": 2,           // total number of columns
-                                        "row": 1,           // total number of rows
+                                        "cols": 2,           // total number of columns
+                                        "rows": 1,           // total number of rows
                                         "createdAt": "2026-03-15T02:13:45:00Z",
                                         "updatedAt": "2026-03-15T02:13:45:00Z",
                                         "layoutSlots": [
@@ -749,8 +749,8 @@ INT durationSeconds
                                                                 "id": 1,
                                                                 "layoutId": 1,
                                                                 "moduleId": 1,
-                                                                "gridCol": 1,
-                                                                "gridRow": 1,
+                                                                "colPos": 1,
+                                                                "rowPos": 1,
                                                                 "colSpan": 1,
                                                                 "rowSpan": 1,
                                                                 "zIndex": 1
@@ -759,8 +759,8 @@ INT durationSeconds
                                                                 "id": 2,
                                                                 "layoutId": 2,
                                                                 "moduleId": 2,
-                                                                "gridCol": 2,
-                                                                "gridRow": 1,
+                                                                "colPos": 2,
+                                                                "rowPos": 1,
                                                                 "colSpan": 1,
                                                                 "rowSpan": 1,
                                                                 "zIndex": 1
@@ -944,8 +944,8 @@ INT durationSeconds
                     "layout": {
                         "id": 1,
                         "name": "Campus Center Default",
-                        "col": 2,           // total number of columns
-                        "row": 1,           // total number of rows
+                        "cols": 2,           // total number of columns
+                        "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
                         "layoutSlots": [
@@ -953,8 +953,8 @@ INT durationSeconds
                                                 "id": 1,
                                                 "layoutId": 1,
                                                 "moduleId": 1,
-                                                "gridCol": 1,
-                                                "gridRow": 1,
+                                                "colPos": 1,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -963,8 +963,8 @@ INT durationSeconds
                                                 "id": 2,
                                                 "layoutId": 2,
                                                 "moduleId": 2,
-                                                "gridCol": 2,
-                                                "gridRow": 1,
+                                                "colPos": 2,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -981,8 +981,8 @@ INT durationSeconds
                         "layout": {
                             "id": 1,
                             "name": "Campus Center Default",
-                            "col": 2,           // total number of columns
-                            "row": 1,           // total number of rows
+                            "cols": 2,           // total number of columns
+                            "rows": 1,           // total number of rows
                             "createdAt": "2026-03-15T02:13:45:00Z",
                             "updatedAt": "2026-03-15T02:13:45:00Z",
                             "layoutSlots": [
@@ -990,8 +990,8 @@ INT durationSeconds
                                                     "id": 1,
                                                     "layoutId": 1,
                                                     "moduleId": 1,
-                                                    "gridCol": 1,
-                                                    "gridRow": 1,
+                                                    "colPos": 1,
+                                                    "rowPos": 1,
                                                     "colSpan": 1,
                                                     "rowSpan": 1,
                                                     "zIndex": 1
@@ -1000,8 +1000,8 @@ INT durationSeconds
                                                     "id": 2,
                                                     "layoutId": 2,
                                                     "moduleId": 2,
-                                                    "gridCol": 2,
-                                                    "gridRow": 1,
+                                                    "colPos": 2,
+                                                    "rowPos": 1,
                                                     "colSpan": 1,
                                                     "rowSpan": 1,
                                                     "zIndex": 1
@@ -1088,8 +1088,8 @@ INT durationSeconds
                     "layout": {
                         "id": 1,
                         "name": "Campus Center Default",
-                        "col": 2,           // total number of columns
-                        "row": 1,           // total number of rows
+                        "cols": 2,           // total number of columns
+                        "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
                         "layoutSlots": [
@@ -1097,8 +1097,8 @@ INT durationSeconds
                                                 "id": 1,
                                                 "layoutId": 1,
                                                 "moduleId": 1,
-                                                "gridCol": 1,
-                                                "gridRow": 1,
+                                                "colPos": 1,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -1107,8 +1107,8 @@ INT durationSeconds
                                                 "id": 2,
                                                 "layoutId": 2,
                                                 "moduleId": 2,
-                                                "gridCol": 2,
-                                                "gridRow": 1,
+                                                "colPos": 2,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -1172,8 +1172,8 @@ INT durationSeconds
                     "layout": {             // assigned different layout to the device group
                         "id": 2,
                         "name": "Test Layout",
-                        "col": 2,           // total number of columns
-                        "row": 1,           // total number of rows
+                        "cols": 2,           // total number of columns
+                        "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
                         "layoutSlots": [
@@ -1181,8 +1181,8 @@ INT durationSeconds
                                                 "id": 3,
                                                 "layoutId": 1,
                                                 "moduleId": 1,
-                                                "gridCol": 1,
-                                                "gridRow": 1,
+                                                "colPos": 1,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -1191,8 +1191,8 @@ INT durationSeconds
                                                 "id": 4,
                                                 "layoutId": 2,
                                                 "moduleId": 2,
-                                                "gridCol": 2,
-                                                "gridRow": 1,
+                                                "colPos": 2,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -1331,8 +1331,8 @@ INT durationSeconds
                     {
                         "id": 1,
                         "name": "Campus Center Default",
-                        "col": 2,           // total number of columns
-                        "row": 1,           // total number of rows
+                        "cols": 2,           // total number of columns
+                        "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
                         "layoutSlots": [
@@ -1340,8 +1340,8 @@ INT durationSeconds
                                                 "id": 1,
                                                 "layoutId": 1,
                                                 "moduleId": 1,
-                                                "gridCol": 1,
-                                                "gridRow": 1,
+                                                "colPos": 1,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -1350,8 +1350,8 @@ INT durationSeconds
                                                 "id": 2,
                                                 "layoutId": 2,
                                                 "moduleId": 2,
-                                                "gridCol": 2,
-                                                "gridRow": 1,
+                                                "colPos": 2,
+                                                "rowPos": 1,
                                                 "colSpan": 1,
                                                 "rowSpan": 1,
                                                 "zIndex": 1
@@ -1362,8 +1362,8 @@ INT durationSeconds
                     {
                         "id": 2,
                         "name": "Test Layout",
-                        "col": 2,           // total number of columns
-                        "row": 3,           // total number of rows
+                        "cols": 2,           // total number of columns
+                        "rows": 3,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
                         "layoutSlots": []
@@ -1392,8 +1392,8 @@ INT durationSeconds
     
     {
         "name": "Another Layout",
-        "col": 2,           // total number of columns
-        "row": 2,           // total number of rows
+        "cols": 2,           // total number of columns
+        "rows": 2,           // total number of rows
     }
 
     RESPONSE 201
@@ -1404,8 +1404,8 @@ INT durationSeconds
         "data": {
                     "id": 3,
                     "name": "Anohter Layout",
-                    "col": 2,           // total number of columns
-                    "row": 2,           // total number of rows
+                    "cols": 2,           // total number of columns
+                    "rows": 2,           // total number of rows
                     "createdAt": "2026-03-15T02:45:45:00Z",
                     "updatedAt": "2026-03-15T02:45:45:00Z"
                 },
@@ -1451,8 +1451,8 @@ INT durationSeconds
         "data": {
                     "id": 3,
                     "name": "Anohter Layout",
-                    "col": 2,           // total number of columns
-                    "row": 2,           // total number of rows
+                    "cols": 2,           // total number of columns
+                    "rows": 2,           // total number of rows
                     "createdAt": "2026-03-15T02:45:45:00Z",
                     "updatedAt": "2026-03-15T02:45:45:00Z",
                     "layoutSlots": [
@@ -1460,8 +1460,8 @@ INT durationSeconds
                                             "id": 1,
                                             "layoutId": 1,
                                             "moduleId": 1,
-                                            "gridCol": 1,
-                                            "gridRow": 1,
+                                            "colPos": 1,
+                                            "rowPos": 1,
                                             "colSpan": 1,
                                             "rowSpan": 1,
                                             "zIndex": 1
@@ -1470,8 +1470,8 @@ INT durationSeconds
                                             "id": 2,
                                             "layoutId": 2,
                                             "moduleId": 2,
-                                            "gridCol": 2,
-                                            "gridRow": 1,
+                                            "colPos": 2,
+                                            "rowPos": 1,
                                             "colSpan": 1,
                                             "rowSpan": 1,
                                             "zIndex": 1
@@ -1516,8 +1516,8 @@ INT durationSeconds
     REQUEST
         {
             "name": "Updated Layout Name",
-            "col": 2,
-            "row": 2
+            "cols": 2,
+            "rows": 2
         }
 
     RESPONSE 200
@@ -1529,8 +1529,8 @@ INT durationSeconds
         "data": {
                     "id": 3,
                     "name": "Updated Layout Name",
-                    "col": 2,           // total number of columns
-                    "row": 2,           // total number of rows
+                    "cols": 2,           // total number of columns
+                    "rows": 2,           // total number of rows
                     "createdAt": "2026-03-15T02:45:45:00Z",
                     "updatedAt": "2026-03-15T03:10:45:00Z"
                 },
@@ -1654,8 +1654,8 @@ INT durationSeconds
                         "id": 1,
                         "layoutId": 1,
                         "moduleId": 1,
-                        "gridCol": 1,
-                        "gridRow": 1,
+                        "colPos": 1,
+                        "rowPos": 1,
                         "colSpan": 1,
                         "rowSpan": 1,
                         "zIndex": 1,
@@ -1666,8 +1666,8 @@ INT durationSeconds
                         "id": 2,
                         "layoutId": 2,
                         "moduleId": 2,
-                        "gridCol": 2,
-                        "gridRow": 1,
+                        "colPos": 2,
+                        "rowPos": 1,
                         "colSpan": 1,
                         "rowSpan": 1,
                         "zIndex": 1,
@@ -1705,8 +1705,8 @@ INT durationSeconds
                     "id": 1,
                     "layoutId": 1,
                     "moduleId": 2,
-                    "gridCol": 1,
-                    "gridRow": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 1,
@@ -1751,8 +1751,8 @@ INT durationSeconds
     {
         "layoutId": 1,
         "moduleId": 1,
-        "gridCol": 1,
-        "gridRow": 1,
+        "colPos": 1,
+        "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
         "zIndex": 1
@@ -1768,8 +1768,8 @@ INT durationSeconds
                     "id": 1,
                     "layoutId": 1,
                     "moduleId": 1,
-                    "gridCol": 1,
-                    "gridRow": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 1,
@@ -1788,7 +1788,7 @@ INT durationSeconds
         "data": null,
         "errors":[
             {"error": "Grid column is not defined"},
-            {"error": "Grid row is not defined"}
+            {"error": "Grid rows is not defined"}
         ]
     }
     
@@ -1818,8 +1818,8 @@ INT durationSeconds
     {
         "layoutId": 1,
         "moduleId": 2,      //updated
-        "gridCol": 1,
-        "gridRow": 1,
+        "colPos": 1,
+        "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
         "zIndex": 1
@@ -1835,8 +1835,8 @@ INT durationSeconds
                     "id": 1,
                     "layoutId": 1,
                     "moduleId": 2,
-                    "gridCol": 1,
-                    "gridRow": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 1,
@@ -1972,8 +1972,8 @@ INT durationSeconds
                                     "dateFormat": "dd/MM/yyyy",
                                     "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
                                 },
-                        "gridCol": 1,
-                        "gridRow": 1,
+                        "colPos": 1,
+                        "rowPos": 1,
                         "colSpan": 1,
                         "rowSpan": 1,
                         "zIndex": 1,
@@ -1986,8 +1986,8 @@ INT durationSeconds
                                     "transitionEffect": "fade",
                                     "defaultDurationSeconds": 10,
                                 },
-                        "gridCol": 1,
-                        "gridRow": 1,
+                        "colPos": 1,
+                        "rowPos": 1,
                         "colSpan": 1,
                         "rowSpan": 1,
                         "zIndex": 1,
@@ -2052,8 +2052,8 @@ INT durationSeconds
                                 "dateFormat": "dd/MM/yyyy",
                                 "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
                             },
-                    "gridCol": 1,
-                    "gridRow": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 1,
@@ -2100,8 +2100,8 @@ INT durationSeconds
                     "dateFormat": "dd/MM/yyyy",
                     "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
                 },
-        "gridCol": 1,
-        "gridRow": 1,
+        "colPos": 1,
+        "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
         "zIndex": 1,
@@ -2123,8 +2123,8 @@ INT durationSeconds
                                 "dateFormat": "dd/MM/yyyy",
                                 "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
                             },
-                    "gridCol": 1,
-                    "gridRow": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 1,
@@ -2178,8 +2178,8 @@ INT durationSeconds
                     "dateFormat": "dd/MM/yyyy",
                     "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
                 },
-        "gridCol": 1,
-        "gridRow": 1,
+        "colPos": 1,
+        "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
         "zIndex": 5,                    // updated
@@ -2202,8 +2202,8 @@ INT durationSeconds
                                 "dateFormat": "dd/MM/yyyy",
                                 "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
                             },
-                    "gridCol": 1,
-                    "gridRow": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 5,            // updated

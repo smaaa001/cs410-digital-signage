@@ -4,8 +4,8 @@ public class LayoutSlotRequestUpdateDto {
     private Long id;
     private Long layoutId;
     private Long moduleId;
-    private int gridCol;
-    private int gridRow;
+    private int colPos;
+    private int rowPos;
     private int colSpan;
     private int rowSpan;
     private int zIndex;
@@ -34,20 +34,20 @@ public class LayoutSlotRequestUpdateDto {
         this.moduleId = moduleId;
     }
 
-    public int getGridCol() {
-        return gridCol;
+    public int getColPos() {
+        return colPos;
     }
 
-    public void setGridCol(int gridCol) {
-        this.gridCol = gridCol;
+    public void setColPos(int colPos) {
+        this.colPos = colPos;
     }
 
-    public int getGridRow() {
-        return gridRow;
+    public int getRowPos() {
+        return rowPos;
     }
 
-    public void setGridRow(int gridRow) {
-        this.gridRow = gridRow;
+    public void setRowPos(int rowPos) {
+        this.rowPos = rowPos;
     }
 
     public int getColSpan() {

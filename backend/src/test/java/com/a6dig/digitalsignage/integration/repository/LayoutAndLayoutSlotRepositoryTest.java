@@ -29,8 +29,8 @@ class LayoutAndLayoutSlotRepositoryTest {
     private Layout build(String name, int col, int row){
         Layout layout = new Layout();
         layout.setName(name);
-        layout.setLayoutCol(col);
-        layout.setLayoutRow(row);
+        layout.setCols(col);
+        layout.setRows(row);
         return layout;
     }
 
@@ -40,31 +40,31 @@ class LayoutAndLayoutSlotRepositoryTest {
     void shouldSaveLayoutWithLayoutSlots(){
         Layout layout = new Layout();
         layout.setName("Default Layout");
-        layout.setLayoutCol(2);
-        layout.setLayoutRow(2);
+        layout.setCols(2);
+        layout.setRows(2);
 
         LayoutSlot layoutSlot1 = new LayoutSlot(layout);
         layoutSlot1.setModuleId(1L);
-        layoutSlot1.setGridCol(1);
-        layoutSlot1.setGridRow(1);
+        layoutSlot1.setColPos(1);
+        layoutSlot1.setRowPos(1);
         layoutSlot1.setColSpan(2);
         layoutSlot1.setRowSpan(1);
 
         LayoutSlot layoutSlot2 = new LayoutSlot(layout);
         layoutSlot2.setModuleId(1L);
-        layoutSlot2.setGridCol(1);
-        layoutSlot2.setGridRow(2);
+        layoutSlot2.setColPos(1);
+        layoutSlot2.setRowPos(2);
         layoutSlot2.setColSpan(2);
         layoutSlot2.setRowSpan(1);
 
-        layout.setLayoutSlotList(List.of(layoutSlot1, layoutSlot2));
+        layout.setSlots(List.of(layoutSlot1, layoutSlot2));
 
         Layout saved = layoutRepository.save(layout);
 
         assertNotNull(saved.getId());
-        assertEquals(2, saved.getLayoutSlotList().size());
-        assertTrue(layoutSlotRepository.findById(saved.getLayoutSlotList().get(0).getId()).isPresent());
-        assertTrue(layoutSlotRepository.findById(saved.getLayoutSlotList().get(1).getId()).isPresent());
+        assertEquals(2, saved.getSlots().size());
+        assertTrue(layoutSlotRepository.findById(saved.getSlots().get(0).getId()).isPresent());
+        assertTrue(layoutSlotRepository.findById(saved.getSlots().get(1).getId()).isPresent());
 
     }
     @Test
@@ -72,38 +72,38 @@ class LayoutAndLayoutSlotRepositoryTest {
     void shouldCascadeDeleteLayoutSlotsWithLayout(){
         Layout layout = new Layout();
         layout.setName("Default Layout");
-        layout.setLayoutCol(2);
-        layout.setLayoutRow(2);
+        layout.setCols(2);
+        layout.setRows(2);
 
         LayoutSlot layoutSlot1 = new LayoutSlot(layout);
         layoutSlot1.setModuleId(1L);
-        layoutSlot1.setGridCol(1);
-        layoutSlot1.setGridRow(1);
+        layoutSlot1.setColPos(1);
+        layoutSlot1.setRowPos(1);
         layoutSlot1.setColSpan(2);
         layoutSlot1.setRowSpan(1);
 
         LayoutSlot layoutSlot2 = new LayoutSlot(layout);
         layoutSlot2.setModuleId(1L);
-        layoutSlot2.setGridCol(1);
-        layoutSlot2.setGridRow(2);
+        layoutSlot2.setColPos(1);
+        layoutSlot2.setRowPos(2);
         layoutSlot2.setColSpan(2);
         layoutSlot2.setRowSpan(1);
 
-        layout.setLayoutSlotList(List.of(layoutSlot1, layoutSlot2));
+        layout.setSlots(List.of(layoutSlot1, layoutSlot2));
 
         Layout saved = layoutRepository.save(layout);
 
         assertNotNull(saved.getId());
-        assertEquals(2, saved.getLayoutSlotList().size());
-        assertTrue(layoutSlotRepository.findById(saved.getLayoutSlotList().get(0).getId()).isPresent());
-        assertTrue(layoutSlotRepository.findById(saved.getLayoutSlotList().get(1).getId()).isPresent());
+        assertEquals(2, saved.getSlots().size());
+        assertTrue(layoutSlotRepository.findById(saved.getSlots().get(0).getId()).isPresent());
+        assertTrue(layoutSlotRepository.findById(saved.getSlots().get(1).getId()).isPresent());
 
 
         layoutRepository.deleteAll();
 
         assertEquals(0, layoutSlotRepository.count());
-        assertFalse(layoutSlotRepository.findById(saved.getLayoutSlotList().get(0).getId()).isPresent());
-        assertFalse(layoutSlotRepository.findById(saved.getLayoutSlotList().get(1).getId()).isPresent());
+        assertFalse(layoutSlotRepository.findById(saved.getSlots().get(0).getId()).isPresent());
+        assertFalse(layoutSlotRepository.findById(saved.getSlots().get(1).getId()).isPresent());
 
     }
 
@@ -113,22 +113,22 @@ class LayoutAndLayoutSlotRepositoryTest {
     void shouldCascadeMergeLayoutSlotsWithLayout(){
         Layout layout = new Layout();
         layout.setName("Default Layout");
-        layout.setLayoutCol(2);
-        layout.setLayoutRow(2);
+        layout.setCols(2);
+        layout.setRows(2);
 
         Layout savedLayout = layoutRepository.save(layout);
 
         LayoutSlot layoutSlot1 = new LayoutSlot(savedLayout);
         layoutSlot1.setModuleId(1L);
-        layoutSlot1.setGridCol(1);
-        layoutSlot1.setGridRow(1);
+        layoutSlot1.setColPos(1);
+        layoutSlot1.setRowPos(1);
         layoutSlot1.setColSpan(2);
         layoutSlot1.setRowSpan(1);
 
         LayoutSlot layoutSlot2 = new LayoutSlot(savedLayout);
         layoutSlot2.setModuleId(1L);
-        layoutSlot2.setGridCol(1);
-        layoutSlot2.setGridRow(2);
+        layoutSlot2.setColPos(1);
+        layoutSlot2.setRowPos(2);
         layoutSlot2.setColSpan(2);
         layoutSlot2.setRowSpan(1);
 
@@ -138,15 +138,15 @@ class LayoutAndLayoutSlotRepositoryTest {
 
         savedLayoutSlots.get(0).setModuleId(33L);
 
-        layout.setLayoutSlotList(savedLayoutSlots);
+        layout.setSlots(savedLayoutSlots);
 
 
         Layout saved = layoutRepository.save(layout);
 
         assertNotNull(saved.getId());
-        assertEquals(2, saved.getLayoutSlotList().size());
-        assertTrue(layoutSlotRepository.findById(saved.getLayoutSlotList().get(0).getId()).isPresent());
-        assertTrue(layoutSlotRepository.findById(saved.getLayoutSlotList().get(1).getId()).isPresent());
+        assertEquals(2, saved.getSlots().size());
+        assertTrue(layoutSlotRepository.findById(saved.getSlots().get(0).getId()).isPresent());
+        assertTrue(layoutSlotRepository.findById(saved.getSlots().get(1).getId()).isPresent());
         assertTrue(layoutSlotRepository.findById(id).isPresent());
         assertEquals(33L, layoutSlotRepository.findById(id).get().getModuleId());
 
@@ -158,22 +158,22 @@ class LayoutAndLayoutSlotRepositoryTest {
     void shouldGetAllLayoutSlotsByLayoutId(){
         Layout layout = new Layout();
         layout.setName("Default Layout");
-        layout.setLayoutCol(2);
-        layout.setLayoutRow(2);
+        layout.setCols(2);
+        layout.setRows(2);
 
         Layout savedLayout = layoutRepository.save(layout);
 
         LayoutSlot layoutSlot1 = new LayoutSlot(savedLayout);
         layoutSlot1.setModuleId(1L);
-        layoutSlot1.setGridCol(1);
-        layoutSlot1.setGridRow(1);
+        layoutSlot1.setColPos(1);
+        layoutSlot1.setRowPos(1);
         layoutSlot1.setColSpan(2);
         layoutSlot1.setRowSpan(1);
 
         LayoutSlot layoutSlot2 = new LayoutSlot(savedLayout);
         layoutSlot2.setModuleId(1L);
-        layoutSlot2.setGridCol(1);
-        layoutSlot2.setGridRow(2);
+        layoutSlot2.setColPos(1);
+        layoutSlot2.setRowPos(2);
         layoutSlot2.setColSpan(2);
         layoutSlot2.setRowSpan(1);
 
