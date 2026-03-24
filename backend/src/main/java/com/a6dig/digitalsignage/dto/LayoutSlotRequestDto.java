@@ -3,8 +3,8 @@ package com.a6dig.digitalsignage.dto;
 public class LayoutSlotRequestDto {
 
     private Long moduleId;
-    private int gridCol;
-    private int gridRow;
+    private int colPos;
+    private int rowPos;
     private int colSpan;
     private int rowSpan;
     private int zIndex;
@@ -18,20 +18,20 @@ public class LayoutSlotRequestDto {
         this.moduleId = moduleId;
     }
 
-    public int getGridCol() {
-        return gridCol;
+    public int getColPos() {
+        return colPos;
     }
 
-    public void setGridCol(int gridCol) {
-        this.gridCol = gridCol;
+    public void setColPos(int colPos) {
+        this.colPos = colPos;
     }
 
-    public int getGridRow() {
-        return gridRow;
+    public int getRowPos() {
+        return rowPos;
     }
 
-    public void setGridRow(int gridRow) {
-        this.gridRow = gridRow;
+    public void setRowPos(int rowPos) {
+        this.rowPos = rowPos;
     }
 
     public int getColSpan() {
