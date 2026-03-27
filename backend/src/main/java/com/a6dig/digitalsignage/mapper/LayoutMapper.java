@@ -40,6 +40,7 @@ public class LayoutMapper {
         dto.setRowPos(slot.getRowPos());
         dto.setColSpan(slot.getColSpan());
         dto.setRowSpan(slot.getRowSpan());
+        dto.setzIndex(slot.getzIndex());
         dto.setCreatedAt(slot.getCreatedAt());
         dto.setUpdatedAt(slot.getUpdatedAt());
         return dto;
