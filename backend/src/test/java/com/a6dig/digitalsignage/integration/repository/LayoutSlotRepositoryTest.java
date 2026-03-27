@@ -1,9 +1,12 @@
 package com.a6dig.digitalsignage.integration.repository;
 
+import com.a6dig.digitalsignage.dto.LayoutRequestDto;
+import com.a6dig.digitalsignage.dto.LayoutSlotRequestUpdateDto;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,6 +34,17 @@ class LayoutSlotRepositoryTest {
 //        this.layresl
     }
 
+
+    private Layout buildLayout(String name, int col, int row){
+        Layout layout = new Layout();
+        layout.setName(name);
+        layout.setCols(col);
+        layout.setRows(row);
+        return layout;
+    }
+
+
+
     private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
         LayoutSlot slot = new LayoutSlot(layout);
 
@@ -46,17 +57,6 @@ class LayoutSlotRepositoryTest {
 
         return slot;
     }
-
-
-    private Layout buildLayout(String name, int col, int row){
-        Layout layout = new Layout();
-        layout.setName(name);
-        layout.setCols(col);
-        layout.setRows(row);
-        return layout;
-    }
-
-
 
     private void assertLayout(Layout layout, String expectedName, int expectedCols, int expectedRows) {
         assertNotNull(layout.getId());
@@ -354,6 +354,72 @@ class LayoutSlotRepositoryTest {
         assertEquals(2, response2.size());
     }
 
+
+
+    @Test
+    @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void shouldDeleteLayoutSlotsByLayoutId() {
+
+        // layout 1
+        Layout layout1 = this.buildLayout("Default Layout", 2,2);
+        LayoutSlot layoutSlot11 = this.buildLayoutSlot(layout1, 1L, 2, 2, 2,1,0);
+        LayoutSlot layoutSlot12 = this.buildLayoutSlot(layout1, 1L, 22, 22, 2,1,0);
+
+        layout1.setSlots(List.of(layoutSlot11, layoutSlot12));
+
+        Layout saved1 = this.layoutRepository.saveAndFlush(layout1);
+        List<LayoutSlot> savedSlots1 = new ArrayList<>(saved1.getSlots());
+        savedSlots1.sort(Comparator.comparing(LayoutSlot::getColPos));
+
+        assertLayout(layout1, "Default Layout", 2,2);
+        assertEquals(2, saved1.getSlots().size());
+        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), 1L, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), 1L, 22, 22, 2,1,0);
+
+
+        // layout 2
+
+        Layout layout2 = this.buildLayout("Secondary Layout", 2,2);
+        LayoutSlot layoutSlot21 = this.buildLayoutSlot(layout2, 1L, 2, 2, 2,1,0);
+        LayoutSlot layoutSlot22 = this.buildLayoutSlot(layout2, 1L, 22, 22, 2,1,0);
+
+
+
+        layout2.setSlots(List.of(layoutSlot21, layoutSlot22));
+
+        Layout saved2 = this.layoutRepository.saveAndFlush(layout2);
+        List<LayoutSlot> savedSlots2 = new ArrayList<>(saved2.getSlots());
+        savedSlots2.sort(Comparator.comparing(LayoutSlot::getColPos));
+
+        assertLayout(layout2, "Secondary Layout", 2,2);
+        assertEquals(2, saved2.getSlots().size());
+        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), 1L, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), 1L, 22, 22, 2,1,0);
+
+
+
+        // verify slots deleted from layout 1
+
+        List<Long> idsToDelete = new ArrayList<>(List.of(layoutSlot11.getId()));
+
+
+        this.layoutSlotRepository.deleteAllByIdInBatch(idsToDelete);
+        this.layoutSlotRepository.flush();
+
+        List<LayoutSlot> response1 = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(saved1.getId());
+
+        assertEquals(1, response1.size());
+
+
+
+
+        // verify  layout 2's slots didn't get delete accidentally
+
+        List<LayoutSlot> response2 = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(saved2.getId());
+
+        assertEquals(2, response2.size());
+    }
+
     // EXISTENCE
     @Test
     void shouldReturnTrueWhenExist() {
@@ -372,7 +438,6 @@ class LayoutSlotRepositoryTest {
     void shouldReturnFalseWhenNotExist() {
         assertFalse(layoutSlotRepository.findById(1L).isPresent());
     }
-
 
 
 }

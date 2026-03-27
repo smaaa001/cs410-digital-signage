@@ -1831,23 +1831,23 @@ INT durationSeconds
     </tr>
     <tr>
         <td>GET</td><td>/api/layouts/{id}/slots</td>
-        <td>Returns all layout slots</td>
-    </tr>
-    <tr>
-        <td>GET</td><td>/api/layouts/{id}/slots/{slotId}</td>
-        <td>Returns a layout slot.</td>
+        <td>Returns all layout slots by layout id.</td>
     </tr>
     <tr>
         <td>POST</td><td>/api/layouts/{id}/slots</td>
-        <td>Add a new layout slot</td>
+        <td>Add layout slots by layout id.</td>
     </tr>
     <tr>
-        <td>PUT</td><td>/api/layouts/{id}/slots/{slotId}</td>
-        <td>Updates a layout slot</td>
+        <td>PUT</td><td>/api/layouts/{id}/slots</td>
+        <td>Updates layout slots by layout id.</td>
     </tr>
     <tr>
-        <td>DELETE</td><td>/api/layouts/{id}/slots/{slotId}</td>
-        <td>Deletes a slot from the layout.</td>
+        <td>DELETE</td><td>/api/layouts/{id}/slots</td>
+        <td>Deletes selected slot(s) from a layout.</td>
+    </tr>
+    <tr>
+        <td>DELETE</td><td>/api/layouts/{id}/slots/all</td>
+        <td>Deletes all slots from a layout.</td>
     </tr>
 </table>
 
@@ -1858,167 +1858,56 @@ INT durationSeconds
     <summary><b>GET</b> /api/layouts/1/slots</summary>
 
 
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "",
-        "data": [
-                    {
-                        "id": 1,
-                        "layoutId": 1,
-                        "moduleId": 1,
-                        "colPos": 1,
-                        "rowPos": 1,
-                        "colSpan": 1,
-                        "rowSpan": 1,
-                        "zIndex": 1,
-                        "createdAt": "2026-03-15T02:13:45:00Z",
-                        "updatedAt": "2026-03-15T02:13:45:00Z"
-                    },
-                    {
-                        "id": 2,
-                        "layoutId": 2,
-                        "moduleId": 2,
-                        "colPos": 2,
-                        "rowPos": 1,
-                        "colSpan": 1,
-                        "rowSpan": 1,
-                        "zIndex": 1,
-                        "createdAt": "2026-03-15T02:13:45:00Z",
-                        "updatedAt": "2026-03-15T02:13:45:00Z"
-                    }
-                ],
-        "errors":[]
-    }
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
-</details>
-
-
-<details>
-    <summary><b>GET</b> /api/layouts/1/slots/1</summary>
-
-
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "",
-        "data": {
-                    "id": 1,
-                    "layoutId": 1,
-                    "moduleId": 2,
-                    "colPos": 1,
-                    "rowPos": 1,
-                    "colSpan": 1,
-                    "rowSpan": 1,
-                    "zIndex": 1,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z"
-                },
-        "errors":[]
-    }
-
-    
-    RESPONSE 404
-
-    {
-        "status": 404,
-        "message": "Layout slot not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout slot with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
-</details>
-
-
-<details>
-    <summary><b>POST</b> /api/layouts/1/slots</summary>
-
-    REQUEST
-    {
-        "layoutId": 1,
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
         "moduleId": 1,
         "colPos": 1,
         "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
-        "zIndex": 1
+        "zIndex": 1,
+        "id": 1,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:35:32.000509",
+        "updatedAt": "2026-03-26T22:35:32.000518"
+      }
+    ],
+    "id": 1,
+    "createdAt": "2026-03-26T22:35:31.984322",
+    "updatedAt": "2026-03-26T22:35:31.984341"
+  },
+  "errors": []
+}
+```
 
-    }
-
-    RESPONSE 201
-
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
     {
-        "status": 201,
-        "message": "Layout slot created successfully",
-        "data": {
-                    "id": 1,
-                    "layoutId": 1,
-                    "moduleId": 1,
-                    "colPos": 1,
-                    "rowPos": 1,
-                    "colSpan": 1,
-                    "rowSpan": 1,
-                    "zIndex": 1,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z"
-                },
-        "errors":[]
-    }
-
-    
-    RESPONSE 400
-
+      "error": "Unexpected error occurred."
+    },
     {
-        "status": 400,
-        "message": "Validation failed",
-        "data": null,
-        "errors":[
-            {"error": "Grid column is not defined"},
-            {"error": "Grid rows is not defined"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
+      "error": "No static resource api/layouts."
+    },
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "No static resource api/layouts."
     }
-
+  ]
+}
+```
 
 </details>
 
@@ -2026,110 +1915,376 @@ INT durationSeconds
 
 
 <details>
-    <summary><b>PUT</b> /api/layouts/1/slots/1</summary>
+    <summary><b>POST</b> /api/layouts/1/slots</summary>
 
-    REQUEST
+REQUEST
+
+```json
+
+{
+  "name": "Main Layout",
+  "cols": 2,
+  "rows": 2,
+  "id": 1,
+  "slots": [
     {
-        "layoutId": 1,
-        "moduleId": 2,      //updated
+      "moduleId": 1,
+      "colPos": 1,
+      "rowPos": 1,
+      "colSpan": 1,
+      "rowSpan": 1,
+      "zIndex": 1
+    }
+  ]
+}
+
+```
+
+RESPONSE 201
+```json
+{
+  "status": 200,
+  "message": "Layout updated successfully.",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 1,
         "colPos": 1,
         "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
-        "zIndex": 1
-    }
-
-
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "Layout slot updated successfully",
-        "data": {
-                    "id": 1,
-                    "layoutId": 1,
-                    "moduleId": 2,
-                    "colPos": 1,
-                    "rowPos": 1,
-                    "colSpan": 1,
-                    "rowSpan": 1,
-                    "zIndex": 1,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z"
-                },
-        "errors":[]
-    }
-
-    
-    RESPONSE 404
-
-    {
-        "status": 404,
-        "message": "Layout slot not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout slot with id 1 doesn't exist"}
-        ]
-    }
-    
+        "zIndex": 1,
+        "id": 1,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:35:32.000509",
+        "updatedAt": "2026-03-26T22:35:32.000518"
+      },
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "id": 3,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:44:00.552714",
+        "updatedAt": "2026-03-26T22:44:00.552739"
+      }
+    ],
+    "id": 1,
+    "createdAt": "2026-03-26T22:35:31.984322",
+    "updatedAt": "2026-03-26T22:35:31.984341"
+  },
+  "errors": []
+}
+```
 
     
-    RESPONSE 500
+RESPONSE 400
 
+```json
+{
+    "status": 400,
+    "message": "Layout slot validation failed.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout slot's position column cannot be negative."
+        }
+    ]
+}
+```
+
+    
+RESPONSE 500
+
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors": [
+        {
+            "error": "Unexpected error occurred."
+        },
+        {
+            "error": "No static resource api/layouts."
+        },
+        {
+            "error": "No static resource api/layouts."
+        }
+    ]
+}
+
+```
+
+
+
+</details>
+
+
+
+
+<details>
+    <summary><b>PUT</b> /api/layouts/1/slots</summary>
+
+REQUEST
+```json
+{
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "id": 1,
+    "slots": [
+        {
+            "id": 3,
+            "layoutId":1,
+            "moduleId": 1,
+            "colPos": 1,
+            "rowPos": 1,
+            "colSpan": 1,
+            "rowSpan": 1,
+            "zIndex": 1
+        }
+    ]
+}
+```
+
+
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "Layout updated successfully.",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "id": 1,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:35:32.000509",
+        "updatedAt": "2026-03-26T22:35:32.000518"
+      },
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "id": 3,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:44:00.552714",
+        "updatedAt": "2026-03-26T22:44:00.552739"
+      }
+    ],
+    "id": 1,
+    "createdAt": "2026-03-26T22:35:31.984322",
+    "updatedAt": "2026-03-26T22:35:31.984341"
+  },
+  "errors": []
+}
+```
+
+
+***RESPONSE 400***
+
+```json
+{
+    "status": 400,
+    "message": "Invalid layout slot provided.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout slot with id 2 doesn't belong to the layout Main Layout"
+        }
+    ]
+}
+```
+
+
+***RESPONSE 404***
+```json
+{
+  "status": 404,
+  "message": "Layout not found.",
+  "data": null,
+  "errors": [
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "Layout with id 55 doesn't exist"
     }
+  ]
+}
+```
+
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
+    {
+      "error": "Unexpected error occurred."
+    },
+    {
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
+    }
+  ]
+}
+```
 
 </details>
 
 
 
 <details>
-    <summary><b>DELETE</b> /api/layouts/1/slots/1</summary>
+    <summary><b>DELETE</b> /api/layouts/1/slots</summary>
 
 
-    RESPONSE 200
+REQUEST
+```json
+{
+  "slots": [
+    {"id": 1}
+  ]
+}
+```
 
-    {
-        "status": 200,
-        "message": "Layout slot deleted successfully.",
-        "data": null,
-        "errors":[]
-    }
 
+RESPONSE 200
+```json
+{
+  "status": 200,
+  "message": "Selected layout slots have been deleted.",
+  "data": null,
+  "errors": []
+}
+```
+
+
+
+RESPONSE 400
+```json
+{
+    "status": 400,
+    "message": "Invalid layout slot provided.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout slot with id 2 doesn't belong to the layout Main Layout"
+        }
+    ]
+}
+```
+
+
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Layout not found.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout with id 11 doesn't exist"
+        }
+    ]
+}
+```
     
-    RESPONSE 404
+RESPONSE 500
 
-    {
-        "status": 404,
-        "message": "Layout slot not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout slot with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors": [
+        {
+            "error": "Unexpected error occurred."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots.."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots.."
+        }
+    ]
+}
+```
 </details>
 
 
+
+<details>
+    <summary><b>DELETE</b> /api/layouts/1/slots/all</summary>
+
+
+RESPONSE 200
+
+```json
+{
+    "status": 200,
+    "message": "All layout slots of layout with id 1 has been deleted.",
+    "data": null,
+    "errors": []
+}
+```
+    
+RESPONSE 404
+
+```json
+{
+    "status": 404,
+    "message": "Layout not found.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout with id 1 doesn't exist"
+        }
+    ]
+}
+```
+
+    
+RESPONSE 500
+
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors": [
+        {
+            "error": "Unexpected error occurred."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots/all.."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots/all.."
+        }
+    ]
+}
+```
+
+</details>
 
 
 
