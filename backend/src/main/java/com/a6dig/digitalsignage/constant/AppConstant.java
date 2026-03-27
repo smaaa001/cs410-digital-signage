@@ -30,5 +30,11 @@ public final class AppConstant {
         public static final String LAYOUT_UPDATED = "Layout updated successfully.";
         public static final String LAYOUT_DELETED = "Layout deleted successfully.";
         public static final String LAYOUT_ALL_DELETED = "Layouts deleted successfully.";
+        public static final String LAYOUT_SLOT_DELETED_SELECTED = "Selected layout slots have been deleted.";
+
+
+        public static String allLayoutSlotsOfTheLayoutDeleted(Long id) {
+            return "All layout slots of layout with id " + id + " has been deleted.";
+        }
     }
 }
