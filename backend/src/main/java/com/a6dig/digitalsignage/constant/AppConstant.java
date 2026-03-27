@@ -6,6 +6,7 @@ public final class AppConstant {
         public static final String LAYOUT_INVALID_LAYOUT_ID = "Invalid layout ID provided. Layout with this ID doesn't exist.";
         public static final String LAYOUT_SLOT_NOT_FOUND = "Layout slot not found.";
         public static final String LAYOUT_VALIDATION_FAILED = "Layout validation failed.";
+        public static final String LAYOUT_SLOT_VALIDATION_FAILED = "Layout slot validation failed.";
 
         public static final String LAYOUT_SLOT_INVALID_LAYOUT_SLOT = "Invalid layout slot provided.";
 
