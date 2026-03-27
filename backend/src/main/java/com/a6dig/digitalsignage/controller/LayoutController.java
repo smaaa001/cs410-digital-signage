@@ -19,7 +19,7 @@ public class LayoutController {
     private LayoutService layoutService;
 
     // get
-    @GetMapping("/{id}")
+    @GetMapping({"/{id}", "/{id}/slots"})
     public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> getLayoutById(@PathVariable Long id) {
         LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.getLayoutById(id);
         return ResponseEntity.ok(APIResponse.success(dto));
