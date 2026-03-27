@@ -3,12 +3,11 @@ package com.a6dig.digitalsignage.dto;
 public abstract class LayoutSlotDtoBase {
 
     private Long moduleId;
-    private int colPos;
-    private int rowPos;
-    private int colSpan;
-    private int rowSpan;
-    private int zIndex;
-
+    private Integer colPos;
+    private Integer rowPos;
+    private Integer colSpan;
+    private Integer rowSpan;
+    private Integer zIndex;
 
     public Long getModuleId() {
         return moduleId;
@@ -18,43 +17,43 @@ public abstract class LayoutSlotDtoBase {
         this.moduleId = moduleId;
     }
 
-    public int getColPos() {
+    public Integer getColPos() {
         return colPos;
     }
 
-    public void setColPos(int colPos) {
+    public void setColPos(Integer colPos) {
         this.colPos = colPos;
     }
 
-    public int getRowPos() {
+    public Integer getRowPos() {
         return rowPos;
     }
 
-    public void setRowPos(int rowPos) {
+    public void setRowPos(Integer rowPos) {
         this.rowPos = rowPos;
     }
 
-    public int getColSpan() {
+    public Integer getColSpan() {
         return colSpan;
     }
 
-    public void setColSpan(int colSpan) {
+    public void setColSpan(Integer colSpan) {
         this.colSpan = colSpan;
     }
 
-    public int getRowSpan() {
+    public Integer getRowSpan() {
         return rowSpan;
     }
 
-    public void setRowSpan(int rowSpan) {
+    public void setRowSpan(Integer rowSpan) {
         this.rowSpan = rowSpan;
     }
 
-    public int getzIndex() {
+    public Integer getzIndex() {
         return zIndex;
     }
 
-    public void setzIndex(int zIndex) {
+    public void setzIndex(Integer zIndex) {
         this.zIndex = zIndex;
     }
 }
