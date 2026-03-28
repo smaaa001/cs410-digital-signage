@@ -13,6 +13,8 @@ public class Module {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name="adCollectionId")
     private AdCollection adCollection;
 
     private String name;
