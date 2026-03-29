@@ -19,7 +19,7 @@ public class Module {
 
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "domainId")
     private Domain domain;
 
