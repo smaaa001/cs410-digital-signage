@@ -16,7 +16,7 @@ public interface LayoutService {
 
     // PUT
     LayoutResponseDto<LayoutSlotResponseDto> updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto);
-    LayoutResponseDto<LayoutSlotResponseDto> updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots);
+    LayoutResponseDto<LayoutSlotResponseDto> updateLayoutSlots(Long id, List<LayoutSlotRequestUpdateDto> slots);
 
     // DELETE
     void deleteLayout(Long id);
