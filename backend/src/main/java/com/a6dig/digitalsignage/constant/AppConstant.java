@@ -43,6 +43,15 @@ public final class AppConstant {
             }
         }
 
+        public static final class Device {
+            public static final String NOT_FOUND = "Device not found";
+            public static final String ID_NOT_PROVIDED = "Null or empty id provided";
+            public static final String INVALID_DATA_PROVIDED = "Invalid data";
+            public static String idDoesNotExist(Long id) {
+                return "Device with id " + id + " doesn't exist";
+            }
+        }
+
         public static final class User {
             public static final String NOT_FOUND = "User not found";
             public static final String INVALID_DATA_PROVIDED = "Invalid user data";
@@ -101,6 +110,13 @@ public final class AppConstant {
             public static final String UPDATED = "User updated successfully";
             public static final String DELETED = "User deleted successfully";
             public static final String DELETED_ALL = "Users deleted successfully";
+        }
+
+        public static final class Device {
+            public static final String CREATED = "Device created successfully";
+            public static final String UPDATED = "Device updated successfully";
+            public static final String DELETED = "Device deleted successfully";
+            public static final String DELETED_ALL = "Devices deleted successfully";
         }
 
 
