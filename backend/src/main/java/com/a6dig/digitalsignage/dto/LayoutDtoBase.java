@@ -4,8 +4,8 @@ import java.util.List;
 
 public abstract class LayoutDtoBase<T extends LayoutSlotDtoBase> {
     private String name;
-    private int cols;
-    private int rows;
+    private Integer cols;
+    private Integer rows;
 
     private List<T> slots;
 
@@ -18,19 +18,19 @@ public abstract class LayoutDtoBase<T extends LayoutSlotDtoBase> {
         this.name = name;
     }
 
-    public int getCols() {
+    public Integer getCols() {
         return cols;
     }
 
-    public void setCols(int cols) {
+    public void setCols(Integer cols) {
         this.cols = cols;
     }
 
-    public int getRows() {
+    public Integer getRows() {
         return rows;
     }
 
-    public void setRows(int rows) {
+    public void setRows(Integer rows) {
         this.rows = rows;
     }
 
