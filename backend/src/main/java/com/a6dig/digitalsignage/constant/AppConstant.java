@@ -74,6 +74,10 @@ public final class AppConstant {
             }
         }
 
+        public static final class DeviceGroup {
+            public static final String NOT_FOUND = "Device group not found";
+        }
+
         public static final class User {
             public static final String NOT_FOUND = "User not found";
             public static final String INVALID_DATA_PROVIDED = "Invalid user data";
@@ -139,6 +143,13 @@ public final class AppConstant {
             public static final String UPDATED = "Device updated successfully";
             public static final String DELETED = "Device deleted successfully";
             public static final String DELETED_ALL = "Devices deleted successfully";
+        }
+
+        public static final class DeviceGroup {
+            public static final String CREATED = "Device group created successfully";
+            public static final String UPDATED = "Device group updated successfully";
+            public static final String DELETED = "Device group deleted successfully";
+            public static final String DELETED_ALL = "Device groups deleted successfully";
         }
 
 
