@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "layoutSlot")
@@ -19,10 +20,18 @@ public class LayoutSlot {
     private Layout layout;
 
 
-    private Long moduleId;
+
+<<<<<<< HEAD
+    private int colPos;
+
+=======
+    @ManyToOne
+    @JoinColumn(name = "moduleId")
+    private Module module;
 
     private int colPos;
 
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     private int rowPos;
 
     private int colSpan;
@@ -39,7 +48,7 @@ public class LayoutSlot {
         this.layout = layout;
     }
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
@@ -72,16 +81,23 @@ public class LayoutSlot {
 //        this.layout = layout;
 //    }
 
+<<<<<<< HEAD
+=======
 
+    public Module getModule() {
+        return module;
+    }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-    public Long getModuleId() {
-        return moduleId;
+    public void setModule(Module module) {
+        this.module = module;
     }
 
-    public void setModuleId(Long moduleId) {
-        this.moduleId = moduleId;
+    public int getColPos() {
+        return colPos;
     }
 
+<<<<<<< HEAD
     public int getColPos() {
         return colPos;
     }
@@ -94,6 +110,16 @@ public class LayoutSlot {
         return rowPos;
     }
 
+=======
+    public void setColPos(int colPos) {
+        this.colPos = colPos;
+    }
+
+    public int getRowPos() {
+        return rowPos;
+    }
+
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     public void setRowPos(int rowPos) {
         this.rowPos = rowPos;
     }
@@ -137,4 +163,5 @@ public class LayoutSlot {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }
