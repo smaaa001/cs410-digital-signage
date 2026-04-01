@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.integration.service;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
@@ -50,7 +51,11 @@ public class LayoutServiceImplTest {
     }
 
 
+<<<<<<< HEAD
     private <T extends LayoutSlotRequestDto>LayoutRequestDto<T> buildLayoutRequestDto(String name, int col, int row) {
+=======
+    private <T extends LayoutSlotRequestDto>LayoutRequestDto<T> buildLayoutRequestDto(String name, Integer col, Integer row) {
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutRequestDto<T> dto = new LayoutRequestDto<>();
         dto.setName(name);
         dto.setCols(col);
@@ -60,7 +65,11 @@ public class LayoutServiceImplTest {
     }
 
 
+<<<<<<< HEAD
     private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex){
+=======
+    private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, Integer colPos, Integer rowPos, Integer colSpan, Integer rowSpan, Integer zIndex){
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutSlotRequestDto slot = new LayoutSlotRequestDto();
 
         slot.setModuleId(moduleId);
@@ -74,7 +83,11 @@ public class LayoutServiceImplTest {
     }
 
 
+<<<<<<< HEAD
     private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long id, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex){
+=======
+    private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long id, Long moduleId, Integer colPos, Integer rowPos, Integer colSpan, Integer rowSpan, Integer zIndex){
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutSlotRequestUpdateDto slot = new LayoutSlotRequestUpdateDto();
 
         slot.setId(id);
@@ -88,9 +101,17 @@ public class LayoutServiceImplTest {
         return slot;
     }
 
+<<<<<<< HEAD
     private void assertLayout(LayoutResponseDto<LayoutSlotResponseDto> layout, String expectedName, int expectedCols, int expectedRows) {
         assertNotNull(layout.getId());
         assertNotNull(layout.getName());
+=======
+    private void assertLayout(LayoutResponseDto<LayoutSlotResponseDto> layout, String expectedName, Integer expectedCols, Integer expectedRows) {
+        assertNotNull(layout.getId());
+        assertNotNull(layout.getName());
+        assertNotNull(layout.getCols());
+        assertNotNull(layout.getRows());
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         assertEquals(expectedName, layout.getName());
         assertEquals(expectedCols, layout.getCols());
         assertEquals(expectedRows, layout.getRows());
@@ -103,6 +124,7 @@ public class LayoutServiceImplTest {
     private void assertLayoutSlot(LayoutSlotResponseDto slot
             , Long expectedLayoutId
             , Long expectedModuleId
+<<<<<<< HEAD
             , int expectedColPos
             , int expectedRowPos
             , int expectedColSpan
@@ -110,6 +132,20 @@ public class LayoutServiceImplTest {
             , int expectedzIndex) {
         assertNotNull(slot.getId());
         assertNotNull(slot.getLayoutId());
+=======
+            , Integer expectedColPos
+            , Integer expectedRowPos
+            , Integer expectedColSpan
+            , Integer expectedRowSpan
+            , Integer expectedzIndex) {
+        assertNotNull(slot.getId());
+        assertNotNull(slot.getLayoutId());
+        assertNotNull(expectedColPos);
+        assertNotNull(expectedRowPos);
+        assertNotNull(expectedColSpan);
+        assertNotNull(expectedRowSpan);
+        assertNotNull(expectedzIndex);
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         assertEquals(expectedLayoutId, slot.getLayoutId());
         assertEquals(expectedModuleId, slot.getModuleId());
         assertEquals(expectedColPos, slot.getColPos());
@@ -158,8 +194,47 @@ public class LayoutServiceImplTest {
         assertLayout(result, "Main Layout", 2, 2);
         assertEquals(2, result.getSlots().size());
         assertLayoutSlot(savedSlot1, result.getId(), null,1, 1, 1, 1, 0);
+<<<<<<< HEAD
         assertLayoutSlot(savedSlot2, result.getId(), 1L,1, 2, 1, 1, 0);
+=======
+        assertLayoutSlot(savedSlot2, result.getId(), null,1, 2, 1, 1, 0);
 
+    }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
+
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidDataColValueNull(){
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(this.buildLayoutRequestDto("Main Layout", null,1)));
+    }
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidDataColValueNegative(){
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(this.buildLayoutRequestDto("Main Layout", -1,1)));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidDataColValueZero(){
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(this.buildLayoutRequestDto("Main Layout", 0,1)));
+    }
+
+
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidDataRowValueNull(){
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(this.buildLayoutRequestDto("Main Layout", 1,null)));
+    }
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidDataRowValueNegative(){
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(this.buildLayoutRequestDto("Main Layout", 1,-1)));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidDataRowValueZero(){
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(this.buildLayoutRequestDto("Main Layout", 1,0)));
     }
 
     // Read
@@ -238,7 +313,11 @@ public class LayoutServiceImplTest {
 
         assertLayout(result, "Main Layout", 2, 2);
         assertLayoutSlot(savedSlots.get(0), result.getId(),null,1, 1, 1, 1, 0);
+<<<<<<< HEAD
         assertLayoutSlot(savedSlots.get(1), result.getId(),1L,1, 2, 1, 1, 0);
+=======
+        assertLayoutSlot(savedSlots.get(1), result.getId(),null,1, 2, 1, 1, 0);
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
     }
 
@@ -253,6 +332,36 @@ public class LayoutServiceImplTest {
         LayoutResponseDto<LayoutSlotResponseDto> updated = this.layoutServiceImpl.updateLayout(created.getId(), updateRequest);
         assertLayout(updated, "Updated Layout", 1,1);
     }
+
+//
+//
+//    @Test
+//    void shouldUpdateLayoutWithNewLayoutSlot() {
+//        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+//                this.buildLayoutRequestDto("Main Layout", 1,1)
+//        );
+//
+//        LayoutSlotRequestUpdateDto slot = this.buildLayoutSlotRequestDto(1L,1,1,1,1,0);
+//
+//
+//        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+//        updateRequest.setSlots(List.of(slot));
+//
+//        LayoutResponseDto<LayoutSlotResponseDto> updated = this.layoutServiceImpl.updateLayout(created.getId(), updateRequest);
+//        assertLayout(updated, "Updated Layout", 1,1);
+//    }
+
+    @Test
+    void shouldOnlyUpdateNonNullableLayoutProperties() {
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1, 1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updatedRequest = this.buildLayoutRequestDto("Updated Layout", null, null);
+        LayoutResponseDto<LayoutSlotResponseDto> updated = this.layoutServiceImpl.updateLayout(created.getId(), updatedRequest);
+
+        assertLayout(updated, "Updated Layout", 1, 1);
+    }
+
 
 //
 //
@@ -343,18 +452,31 @@ public class LayoutServiceImplTest {
 
     @Test void shouldThrowErrorWhenUpdateLayoutWithLayoutSlotsThatDontBelongToTheLayout() {
         LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Main Layout", 1, 1);
+<<<<<<< HEAD
         layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(1L, 1,1,1,1,0)));
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout1 = this.layoutServiceImpl.createLayout(layout1);
 
         LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 1, 1);
         layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(2L, 1,1,1,1,0)));
+=======
+        layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)));
+        LayoutResponseDto<LayoutSlotResponseDto> savedLayout1 = this.layoutServiceImpl.createLayout(layout1);
+
+        LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 1, 1);
+        layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)));
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout2 = this.layoutServiceImpl.createLayout(layout2);
 
 
         LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Updated Layout", 1, 1);
         List<LayoutSlotRequestUpdateDto> slots = new ArrayList<>();
+<<<<<<< HEAD
         slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
         slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
+=======
+        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), null, 1,1,1,1,0));
+        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), null, 1,1,1,1,0));
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         request.setSlots(slots);
 
         assertThrows(InvalidLayoutSlotException.class, () -> this.layoutServiceImpl.updateLayout(savedLayout2.getId(), request));
@@ -410,11 +532,15 @@ public class LayoutServiceImplTest {
 
         LayoutResponseDto<LayoutSlotResponseDto> result = this.layoutServiceImpl.addLayoutSlotToLayout(
                 created.getId(),
-                this.buildLayoutSlotRequestDto(1L, 1,1,1,1,0)
+                this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)
         );
 
         assertEquals(1, result.getSlots().size());
+<<<<<<< HEAD
         assertLayoutSlot(result.getSlots().get(0), result.getId(), 1L, 1,1,1,1,0);
+=======
+        assertLayoutSlot(result.getSlots().get(0), result.getId(), null, 1,1,1,1,0);
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     }
 
     @Test
@@ -422,8 +548,13 @@ public class LayoutServiceImplTest {
     void shouldRemoveSlotFromLayout() {
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 3, 3);
         request.setSlots(List.of(
+<<<<<<< HEAD
                 this.buildLayoutSlotRequestDto(1L, 1,1,1,1, 0),
                 this.buildLayoutSlotRequestDto(1L, 1,1,1,1, 0)
+=======
+                this.buildLayoutSlotRequestDto(null, 1,1,1,1, 0),
+                this.buildLayoutSlotRequestDto(null, 1,1,1,1, 0)
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);
@@ -457,4 +588,448 @@ public class LayoutServiceImplTest {
 
 
 
+    @Test
+    void shouldOnlyUpdateNonNullableLayoutSlotsProperties() {
+
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1, 1);
+        layout.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 2,3,4,1,0)));
+        LayoutResponseDto<LayoutSlotResponseDto> savedLayout = this.layoutServiceImpl.createLayout(layout);
+        LayoutSlotResponseDto savedSlot = savedLayout.getSlots().get(0);
+
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updatedRequest = this.buildLayoutRequestDto("Updated Layout", 1, 1);
+        updatedRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(savedSlot.getId(),null,null,1,1,1,1)
+                )
+        );
+
+        LayoutResponseDto<LayoutSlotResponseDto> updated = this.layoutServiceImpl.updateLayout(savedLayout.getId(), updatedRequest);
+        LayoutSlotResponseDto updatedLayoutSlot = updated.getSlots().get(0);
+
+        assertLayout(updated, "Updated Layout", 1, 1);
+        assertLayoutSlot(updatedLayoutSlot, updated.getId(), null,2,1,1,1,1);
+
+
+    }
+
+
+
+    // slot col pos
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataColPosValueNull(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,null,1,1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataColPosValueNegative(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,-1,1,1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataColPosValueZero(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,0,1,1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+
+    // slot row pos
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataRowPosValueNull(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,null,1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataRowPosValueNegative(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,-1,1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataRowPosValueZero(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,0,1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+
+
+
+    // slot col span
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataColSpanValueNull(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,null,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataColSpanValueNegative(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,-1,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataColSpanValueZero(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,0,1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+
+    // slot row span
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataRowSpanValueNull(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,null,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataRowSpanValueNegative(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,-1,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataRowSpanValueZero(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,0,1)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+
+
+    // slot row span
+    @Test
+    void shouldThrowErrorWhenCreateOrUpdateLayoutSlotWithInvalidDataZIndexValueNull(){
+        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+
+
+        updateRequest.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,1,null)
+                )
+        );
+
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+
+
+    // Create layout slot on Layout creation
+
+
+
+
+    // slot col pos
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataColPosValueNull(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,null,1,1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataColPosValueNegative(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,-1,1,1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataColPosValueZero(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,0,1,1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+
+    // slot row pos
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataRowPosValueNull(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,null,1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataRowPosValueNegative(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,-1,1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataRowPosValueZero(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,0,1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+
+
+
+    // slot col span
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataColSpanValueNull(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,null,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataColSpanValueNegative(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,-1,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataColSpanValueZero(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,0,1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+
+    // slot row span
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataRowSpanValueNull(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,1,null,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataRowSpanValueNegative(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,1,-1,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataRowSpanValueZero(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,1,0,1)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
+
+
+
+
+    // slot row span
+    @Test
+    void shouldThrowErrorWhenOnCreateLayoutCreateLayoutSlotWithInvalidDataZIndexValueNull(){
+        LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
+        layout.setSlots(
+                List.of(
+                        this.buildLayoutSlotRequestDto(null,1,1,1,1,null)
+                )
+        );
+        assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
+    }
 }

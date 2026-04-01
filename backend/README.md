@@ -156,13 +156,9 @@ Every time someone does a pull request, run all the tests! Even though some test
 
 ```mermaid
 erDiagram
-    Device ||--|| Layout : "uses Layout. 
-                        if DeviceGroup.layoutId <> NULL 
-                        THEN show this layout
-                        ELSE override with layout from DeviceGroup"
-    Device ||--o| Pairing : has
+    Device ||--|| Layout : "uses Layout" 
+
     DeviceGroup ||--o{ Device : has
-    DeviceGroup }|--o| Layout : uses
     Layout ||--o{ LayoutSlot : contains
     LayoutSlot }o--|| Module : displays
     AdCollection ||--|{ AdCollectionContentLink : has
@@ -170,43 +166,47 @@ erDiagram
     Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 
-    User {
-BIGINT id pk
-        VARCHAR(50) username
-VARCHAR(50) email
-VARCHAR(255) password
-ENUM role "ADMIN"
-DATETIME createdAt
-DATETIME updatedAt
+Domain {
+    BIGINT id PK
+    VARCHAR(50) type "Module | Ad Content"
+    VARCHAR(50) name
+    VARCHAR(255) description
+    INT displayOrder
+    VARCHAR(50) alphaNumCode "WEATHER | CLOCK | ROTATING_AD | IMAGE | VIDEO"
+}
+
+User {
+    BIGINT id PK
+    VARCHAR(50) username
+    VARCHAR(50) email
+    VARCHAR(255) password
+    VARCHAR(50) role "ADMIN"
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 DeviceGroup {
-BIGINT id pk
-BIGINT layoutId fk
-VARCHAR(50) name
-VARCHAR(255) description
-DATETIME createdAt
-DATETIME updatedAt
-    }
-
-Device {
-BIGINT id pk
-BIGINT layoutId fk
-VARCHAR(50) name
-VARCHAR(50) pairingId
-ENUM status "ONLINE | OFFLINE"
-BIGINT DeviceGroupId fk
-DATETIME createdAt
-DATETIME updatedAt
-    }
-Pairing {
-BIGINT id pk
-BOOLEAN paired
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    VARCHAR(50) name
+    VARCHAR(255) description
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
+Device {
+    BIGINT id PK
+    BIGINT layoutId FK
+    VARCHAR(50) name
+    VARCHAR ipAddress
+    VARCHAR(50) status "ONLINE | OFFLINE"
+    BIGINT DeviceGroupId FK
+    DATETIME createdAt
+    DATETIME updatedAt
+}
+
+
 Layout {
+<<<<<<< HEAD
 BIGINT id pk
 VARCHAR(50) name
 INT cols
@@ -226,40 +226,61 @@ INT rowSpan
 INT zIndex
 DATETIME createdAt
 DATETIME updatedAt
+=======
+    BIGINT id PK
+    VARCHAR(50) name
+    INT cols
+    INT rows
+    DATETIME createdAt
+    DATETIME updatedAt
+}
+
+LayoutSlot {
+    BIGINT id PK
+    BIGINT layoutId FK
+    BIGINT moduleId FK
+    INT colPos
+    INT rowPos
+    INT colSpan
+    INT rowSpan
+    INT zIndex
+    DATETIME createdAt
+    DATETIME updatedAt
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 }
 
 Module {
-BIGINT id pk
-BIGINT adCollectionId fk
-VARCHAR(50) name
-ENUM type "CLOCK | WEATHER | ROTATING_AD"
-JSON config "Front end client is responsible for this JSON data. Backend will only store whatever front end client provides."
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    BIGINT adCollectionId FK
+    VARCHAR(50) name
+    VARCHAR(50) type "CLOCK | WEATHER | ROTATING_AD"
+    TEXT config "Front end client is responsible for this JSON data. Backend will only store whatever front end client provides."
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 AdCollection {
-BIGINT id pk
-VARCHAR(50) name
-VARCHAR(255) url
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    VARCHAR(50) name
+    VARCHAR(255) url
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 AdContent {
-BIGINT id pk
-VARCHAR(5) name
-VARCHAR url(255)
-ENUM type "IMAGE | VIDEO"
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    VARCHAR(5) name
+    VARCHAR url(255)
+    VARCHAR(50) type "IMAGE | VIDEO"
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 AdCollectionContentLink {
-BIGINT AdCollectionId fk
-BIGINT AdContentId fk
-INT displayOrder
-INT durationSeconds
+    BIGINT AdCollectionId FK
+    BIGINT AdContentId FK
+    INT displayOrder
+    INT durationSeconds
 }
 
 ```
@@ -321,30 +342,30 @@ INT durationSeconds
 <details>
     <summary><b>GET</b> /api/devices/register</summary>
 
-    RESPONSE 201
+RESPONSE 201
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": {
+                "pairingId": 1
+            },
+    "errors":[]
+}
+```
 
-    {
-        "status": 200,
-        "message": "",
-        "data": {
-                    "pairingId": 1
-                },
-        "errors":[]
-    }
-    
 
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -352,62 +373,63 @@ INT durationSeconds
 <details>
     <summary><b>POST</b> /api/devices/verify-register</summary>
 
-    REQUEST
-    {
-        "pairingId": 1
-        
-    }
-
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "Device already paired",
-        "data": {
-                    "id": 1
-                    "paired": true
-                },
-        "errors":[]
-    }
-
+REQUEST
+```json
+{
+    "pairingId": 1
     
+}
+```
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Device already paired",
+    "data": {
+                "id": 1,
+                "paired": true
+            },
+    "errors":[]
+}
 
-    RESPONSE 200
+```
 
-    {
-        "status": 200,
-        "message": "Pending device pairing",
-        "data": {
-                    "id": 1
-                    "paired": false
-                },
-        "errors":[]
-    }
-    
-    RESPONSE 404
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Pending device pairing",
+    "data": {
+                "id": 1,
+                "paired": false
+            },
+    "errors":[]
+}
+```
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Pairing id not found",
+    "data": null,
+    "errors":[
+        {"error": "Pairing id with 1 doesn't exist"}
+    ]
+}
 
-    {
-        "status": 404,
-        "message": "Pairing id not found",
-        "data": null,
-        "errors":[
-            {"error": "Pairing id with 1 doesn't exist"}
-        ]
-    }
-    
+```
 
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -458,65 +480,66 @@ INT durationSeconds
 <details>
     <summary><b>PATCH</b> /api/devices/1/pair</summary>
 
-    REQUEST
-    {
-        "pairingId": 1,
-        "paired": true
-        
-    }
-
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "Device paired successfully",
-        "data": {
-                    "id": 1
-                    "pairingId": 1,
-                    "pairing": {
-                                "id": 1,
-                                "paired": true
-                            }
-                },
-        "errors":[]
-    }
-
+REQUEST
+```json
+{
+    "pairingId": 1,
+    "paired": true
     
-    RESPONSE 404
+}
+```
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Device paired successfully",
+    "data": {
+                "id": 1,
+                "pairingId": 1,
+                "pairing": {
+                            "id": 1,
+                            "paired": true
+                        }
+            },
+    "errors":[]
+}
+```
 
-    {
-        "status": 404,
-        "message": "Device not found",
-        "data": null,
-        "errors":[
-            {"error": "Device with id 1 doesn't exist"}
-        ]
-    }
-    
-    RESPONSE 404
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Device not found",
+    "data": null,
+    "errors":[
+        {"error": "Device with id 1 doesn't exist"}
+    ]
+}
+```
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Pairing id not found",
+    "data": null,
+    "errors":[
+        {"error": "Pairing id with 1 doesn't exist"}
+    ]
+}
 
-    {
-        "status": 404,
-        "message": "Pairing id not found",
-        "data": null,
-        "errors":[
-            {"error": "Pairing id with 1 doesn't exist"}
-        ]
-    }
-    
+```
 
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -525,49 +548,49 @@ INT durationSeconds
 <details>
     <summary><b>GET</b> /api/devices/1/status</summary>
 
-    RESPONSE 200
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": {
+                "id": 1,
+                "layoutId": 1,
+                "name": "Updated Name",
+                "pairingId": 1,
+                "status": "ONLINE",
+                "deviceGroupId": 1,
+                "createdAt": "2026-03-15T02:13:45:00Z",
+                "updatedAt": "2026-03-15T02:13:45:00Z"
+            },
+    "errors":[]
+}
+```
 
-    {
-        "status": 200,
-        "message": "",
-        "data": {
-                    "id": 1
-                    "layoutId": 1,
-                    "name: "Updated Name",
-                    "pairingId": 1,
-                    "status": "ONLINE",
-                    "deviceGroupId": 1,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z",
-                },
-        "errors":[]
-    }
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Device not found",
+    "data": null,
+    "errors":[
+        {"error": "Device with id 1 doesn't exist"}
+    ]
+}
+```
 
-    
-    RESPONSE 404
 
-    {
-        "status": 404,
-        "message": "Device not found",
-        "data": null,
-        "errors":[
-            {"error": "Device with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 <details>
@@ -621,27 +644,35 @@ INT durationSeconds
 <details>
     <summary><b>GET</b> /api/devices/1</summary>
 
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "",
-        "data": {
-                    "id": 1
-                    "layoutId": 1,
-                    "name: "Updated Name",
-                    "pairingId": 1,
-                    "status": "ONLINE",
-                    "deviceGroupId": 1,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z",
-                    "deviceGroup": {
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": {
+                "id": 1,
+                "layoutId": 1,
+                "name": "Updated Name",
+                "pairingId": 1,
+                "status": "ONLINE",
+                "deviceGroupId": 1,
+                "createdAt": "2026-03-15T02:13:45:00Z",
+                "updatedAt": "2026-03-15T02:13:45:00Z",
+                "deviceGroup": {
+                                "id": 1,
+                                "layoutId": 1,
+                                "name": "Device Group Name",
+                                "description": "A temporary description for this device group.",
+                                "createdAt": "2026-03-15T02:13:45:00Z",
+                                "updatedAt": "2026-03-15T02:13:45:00Z",
+                                "layout": {
                                     "id": 1,
-                                    "layoutId": 1,
-                                    "name": "Device Group Name",
-                                    "description": "A temporary description for this device group.",
+                                    "name": "Campus Center Default",
+                                    "cols": 2,          
+                                    "rows": 1,           
                                     "createdAt": "2026-03-15T02:13:45:00Z",
                                     "updatedAt": "2026-03-15T02:13:45:00Z",
+<<<<<<< HEAD
                                     "layout": {
                                         "id": 1,
                                         "name": "Campus Center Default",
@@ -672,71 +703,104 @@ INT durationSeconds
                                                             }
                                                         ]
                                         }
+=======
+                                    "slots": [
+                                                        {
+                                                            "id": 1,
+                                                            "layoutId": 1,
+                                                            "moduleId": 1,
+                                                            "colPos": 1,
+                                                            "rowPos": 1,
+                                                            "colSpan": 1,
+                                                            "rowSpan": 1,
+                                                            "zIndex": 1
+                                                        },
+                                                        {
+                                                            "id": 2,
+                                                            "layoutId": 2,
+                                                            "moduleId": 2,
+                                                            "colPos": 2,
+                                                            "rowPos": 1,
+                                                            "colSpan": 1,
+                                                            "rowSpan": 1,
+                                                            "zIndex": 1
+                                                        }
+                                                    ]
+                                    }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-                                }
-                },
-        "errors":[]
-    }
+                            }
+            },
+    "errors":[]
+}
+```
 
-    
-    RESPONSE 404
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Device not found",
+    "data": null,
+    "errors":[
+        {"error": "Device with id 1 doesn't exist"}
+    ]
+}
+```
 
-    {
-        "status": 404,
-        "message": "Device not found",
-        "data": null,
-        "errors":[
-            {"error": "Device with id 1 doesn't exist"}
-        ]
-    }
-    
 
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
 <details>
     <summary><b>PATCH</b> /api/devices/1/group</summary>
 
-    REQUEST
+REQUEST
+```json
+{
+    "deviceGroupId": 2
+}
+```
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Device group updated successfully",
+    "data": {
+                "id": 1,
+                "layoutId": 1,
+                "name": "Updated Name",
+                "pairingId": 1,
+                "status": "OFFLINE",
+                "deviceGroupId": 2,
+                "createdAt": "2026-03-15T02:13:45:00Z",
+                "updatedAt": "2026-03-15T02:13:45:00Z",
 
-    {
-        "deviceGroupId": 2
-    }
-
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "Device group updated successfully",
-        "data": {
-                    "id": 1
-                    "layoutId": 1,
-                    "name: "Updated Name",
-                    "pairingId": 1,
-                    "status": "OFFLINE",
-                    "deviceGroupId": 2,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z",
-
-                    "deviceGroup": {
-                                    "id": 2,
-                                    "layoutId": 1,
-                                    "name": "Device Group Name",
-                                    "description": "A temporary description for this device group.",
+                "deviceGroup": {
+                                "id": 2,
+                                "layoutId": 1,
+                                "name": "Device Group Name",
+                                "description": "A temporary description for this device group.",
+                                "createdAt": "2026-03-15T02:13:45:00Z",
+                                "updatedAt": "2026-03-15T02:13:45:00Z",
+                                "layout": {
+                                    "id": 1,
+                                    "name": "Campus Center Default",
+                                    "cols": 2,         
+                                    "rows": 1,           
                                     "createdAt": "2026-03-15T02:13:45:00Z",
                                     "updatedAt": "2026-03-15T02:13:45:00Z",
+<<<<<<< HEAD
                                     "layout": {
                                         "id": 1,
                                         "name": "Campus Center Default",
@@ -767,90 +831,115 @@ INT durationSeconds
                                                             }
                                                         ]
                                         }
+=======
+                                    "slots": [
+                                                        {
+                                                            "id": 1,
+                                                            "layoutId": 1,
+                                                            "moduleId": 1,
+                                                            "colPos": 1,
+                                                            "rowPos": 1,
+                                                            "colSpan": 1,
+                                                            "rowSpan": 1,
+                                                            "zIndex": 1
+                                                        },
+                                                        {
+                                                            "id": 2,
+                                                            "layoutId": 2,
+                                                            "moduleId": 2,
+                                                            "colPos": 2,
+                                                            "rowPos": 1,
+                                                            "colSpan": 1,
+                                                            "rowSpan": 1,
+                                                            "zIndex": 1
+                                                        }
+                                                    ]
+                                    }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-                                }
-                },
-        "errors":[]
-    }
+                            }
+            },
+    "errors":[]
+}
+```
 
-    
-    RESPONSE 404
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Device not found",
+    "data": null,
+    "errors":[
+        {"error": "Device with id 1 doesn't exist"}
+    ]
+}
+```
 
-    {
-        "status": 404,
-        "message": "Device not found",
-        "data": null,
-        "errors":[
-            {"error": "Device with id 1 doesn't exist"}
-        ]
-    }
-    
 
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 <details>
     <summary><b>PATCH</b> /api/devices/1/status</summary>
 
-    REQUEST
+REQUEST
 
-    {
-        "status": "OFFLINE"
-    }
+{
+    "status": "OFFLINE"
+}
 
-    RESPONSE 200
+RESPONSE 200
 
-    {
-        "status": 200,
-        "message": "Device status updated successfully",
-        "data": {
-                    "id": 1
-                    "layoutId": 1,
-                    "name: "Updated Name",
-                    "pairingId": 1,
-                    "status": "OFFLINE",
-                    "deviceGroupId": 1,
-                    "createdAt": "2026-03-15T02:13:45:00Z",
-                    "updatedAt": "2026-03-15T02:13:45:00Z",
-                },
-        "errors":[]
-    }
+{
+    "status": 200,
+    "message": "Device status updated successfully",
+    "data": {
+                "id": 1
+                "layoutId": 1,
+                "name: "Updated Name",
+                "pairingId": 1,
+                "status": "OFFLINE",
+                "deviceGroupId": 1,
+                "createdAt": "2026-03-15T02:13:45:00Z",
+                "updatedAt": "2026-03-15T02:13:45:00Z",
+            },
+    "errors":[]
+}
 
-    
-    RESPONSE 404
 
-    {
-        "status": 404,
-        "message": "Device not found",
-        "data": null,
-        "errors":[
-            {"error": "Device with id 1 doesn't exist"}
-        ]
-    }
-    
+RESPONSE 404
 
-    
-    RESPONSE 500
+{
+    "status": 404,
+    "message": "Device not found",
+    "data": null,
+    "errors":[
+        {"error": "Device with id 1 doesn't exist"}
+    ]
+}
 
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
+
+
+RESPONSE 500
+
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
 
 </details>
 
@@ -1830,23 +1919,23 @@ INT durationSeconds
     </tr>
     <tr>
         <td>GET</td><td>/api/layouts/{id}/slots</td>
-        <td>Returns all layout slots</td>
-    </tr>
-    <tr>
-        <td>GET</td><td>/api/layouts/{id}/slots/{slotId}</td>
-        <td>Returns a layout slot.</td>
+        <td>Returns all layout slots by layout id.</td>
     </tr>
     <tr>
         <td>POST</td><td>/api/layouts/{id}/slots</td>
-        <td>Add a new layout slot</td>
+        <td>Add layout slots by layout id.</td>
     </tr>
     <tr>
-        <td>PUT</td><td>/api/layouts/{id}/slots/{slotId}</td>
-        <td>Updates a layout slot</td>
+        <td>PUT</td><td>/api/layouts/{id}/slots</td>
+        <td>Updates layout slots by layout id.</td>
     </tr>
     <tr>
-        <td>DELETE</td><td>/api/layouts/{id}/slots/{slotId}</td>
-        <td>Deletes a slot from the layout.</td>
+        <td>DELETE</td><td>/api/layouts/{id}/slots</td>
+        <td>Deletes selected slot(s) from a layout.</td>
+    </tr>
+    <tr>
+        <td>DELETE</td><td>/api/layouts/{id}/slots/all</td>
+        <td>Deletes all slots from a layout.</td>
     </tr>
 </table>
 
@@ -1857,9 +1946,46 @@ INT durationSeconds
     <summary><b>GET</b> /api/layouts/1/slots</summary>
 
 
-    RESPONSE 200
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "id": 1,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:35:32.000509",
+        "updatedAt": "2026-03-26T22:35:32.000518"
+      }
+    ],
+    "id": 1,
+    "createdAt": "2026-03-26T22:35:31.984322",
+    "updatedAt": "2026-03-26T22:35:31.984341"
+  },
+  "errors": []
+}
+```
 
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
     {
+<<<<<<< HEAD
         "status": 200,
         "message": "",
         "data": [
@@ -1893,18 +2019,24 @@ INT durationSeconds
     
     RESPONSE 500
 
+=======
+      "error": "Unexpected error occurred."
+    },
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
     }
+  ]
+}
+```
 
 </details>
 
 
+<<<<<<< HEAD
 <details>
     <summary><b>GET</b> /api/layouts/1/slots/1</summary>
 
@@ -1955,19 +2087,53 @@ INT durationSeconds
     }
 
 </details>
+=======
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
 <details>
     <summary><b>POST</b> /api/layouts/1/slots</summary>
 
-    REQUEST
+REQUEST
+
+```json
+
+{
+  "name": "Main Layout",
+  "cols": 2,
+  "rows": 2,
+  "id": 1,
+  "slots": [
     {
-        "layoutId": 1,
+      "moduleId": 1,
+      "colPos": 1,
+      "rowPos": 1,
+      "colSpan": 1,
+      "rowSpan": 1,
+      "zIndex": 1
+    }
+  ]
+}
+
+```
+
+RESPONSE 201
+```json
+{
+  "status": 200,
+  "message": "Layout updated successfully.",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
         "moduleId": 1,
         "colPos": 1,
         "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
+<<<<<<< HEAD
         "zIndex": 1
 
     }
@@ -2031,10 +2197,21 @@ INT durationSeconds
     {
         "layoutId": 1,
         "moduleId": 2,      //updated
+=======
+        "zIndex": 1,
+        "id": 1,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:35:32.000509",
+        "updatedAt": "2026-03-26T22:35:32.000518"
+      },
+      {
+        "moduleId": 1,
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         "colPos": 1,
         "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
+<<<<<<< HEAD
         "zIndex": 1
     }
 
@@ -2058,77 +2235,325 @@ INT durationSeconds
                 },
         "errors":[]
     }
+=======
+        "zIndex": 1,
+        "id": 3,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:44:00.552714",
+        "updatedAt": "2026-03-26T22:44:00.552739"
+      }
+    ],
+    "id": 1,
+    "createdAt": "2026-03-26T22:35:31.984322",
+    "updatedAt": "2026-03-26T22:35:31.984341"
+  },
+  "errors": []
+}
+```
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
     
-    RESPONSE 404
+RESPONSE 400
 
+```json
+{
+    "status": 400,
+    "message": "Layout slot validation failed.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout slot's position column cannot be negative."
+        }
+    ]
+}
+```
+
+    
+RESPONSE 500
+
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors": [
+        {
+            "error": "Unexpected error occurred."
+        },
+        {
+            "error": "No static resource api/layouts."
+        },
+        {
+            "error": "No static resource api/layouts."
+        }
+    ]
+}
+
+```
+
+
+
+</details>
+
+
+
+
+<details>
+    <summary><b>PUT</b> /api/layouts/1/slots</summary>
+
+REQUEST
+```json
+{
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "id": 1,
+    "slots": [
+        {
+            "id": 3,
+            "layoutId":1,
+            "moduleId": 1,
+            "colPos": 1,
+            "rowPos": 1,
+            "colSpan": 1,
+            "rowSpan": 1,
+            "zIndex": 1
+        }
+    ]
+}
+```
+
+
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "Layout updated successfully.",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "id": 1,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:35:32.000509",
+        "updatedAt": "2026-03-26T22:35:32.000518"
+      },
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "id": 3,
+        "layoutId": 1,
+        "createdAt": "2026-03-26T22:44:00.552714",
+        "updatedAt": "2026-03-26T22:44:00.552739"
+      }
+    ],
+    "id": 1,
+    "createdAt": "2026-03-26T22:35:31.984322",
+    "updatedAt": "2026-03-26T22:35:31.984341"
+  },
+  "errors": []
+}
+```
+
+
+***RESPONSE 400***
+
+```json
+{
+    "status": 400,
+    "message": "Invalid layout slot provided.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout slot with id 2 doesn't belong to the layout Main Layout"
+        }
+    ]
+}
+```
+
+
+***RESPONSE 404***
+```json
+{
+  "status": 404,
+  "message": "Layout not found.",
+  "data": null,
+  "errors": [
     {
-        "status": 404,
-        "message": "Layout slot not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout slot with id 1 doesn't exist"}
-        ]
+      "error": "Layout with id 55 doesn't exist"
     }
-    
+  ]
+}
+```
 
-    
-    RESPONSE 500
-
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "Unexpected error occurred."
+    },
+    {
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
     }
+  ]
+}
+```
 
 </details>
 
 
 
 <details>
-    <summary><b>DELETE</b> /api/layouts/1/slots/1</summary>
+    <summary><b>DELETE</b> /api/layouts/1/slots</summary>
 
 
-    RESPONSE 200
+REQUEST
+```json
+{
+  "slots": [
+    {"id": 1}
+  ]
+}
+```
 
-    {
-        "status": 200,
-        "message": "Layout slot deleted successfully.",
-        "data": null,
-        "errors":[]
-    }
 
+RESPONSE 200
+```json
+{
+  "status": 200,
+  "message": "Selected layout slots have been deleted.",
+  "data": null,
+  "errors": []
+}
+```
+
+
+
+RESPONSE 400
+```json
+{
+    "status": 400,
+    "message": "Invalid layout slot provided.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout slot with id 2 doesn't belong to the layout Main Layout"
+        }
+    ]
+}
+```
+
+
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Layout not found.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout with id 11 doesn't exist"
+        }
+    ]
+}
+```
     
-    RESPONSE 404
+RESPONSE 500
 
-    {
-        "status": 404,
-        "message": "Layout slot not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout slot with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors": [
+        {
+            "error": "Unexpected error occurred."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots.."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots.."
+        }
+    ]
+}
+```
 </details>
 
 
+
+<details>
+    <summary><b>DELETE</b> /api/layouts/1/slots/all</summary>
+
+
+RESPONSE 200
+
+```json
+{
+    "status": 200,
+    "message": "All layout slots of layout with id 1 has been deleted.",
+    "data": null,
+    "errors": []
+}
+```
+    
+RESPONSE 404
+
+```json
+{
+    "status": 404,
+    "message": "Layout not found.",
+    "data": null,
+    "errors": [
+        {
+            "error": "Layout with id 1 doesn't exist"
+        }
+    ]
+}
+```
+
+    
+RESPONSE 500
+
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors": [
+        {
+            "error": "Unexpected error occurred."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots/all.."
+        },
+        {
+            "error": "No static resource api/layouts/1/slots/all.."
+        }
+    ]
+}
+```
+
+</details>
 
 
 
@@ -2169,8 +2594,9 @@ INT durationSeconds
     <summary><b>GET</b> /api/modules</summary>
 
 
-    RESPONSE 200
+RESPONSE 200
 
+<<<<<<< HEAD
     {
         "status": 200,
         "message": "",
@@ -2222,39 +2648,14 @@ INT durationSeconds
                                                         "createdAt": "2026-03-15T02:45:45:00Z",
                                                         "updatedAt": "2026-03-15T03:10:45:00Z"
                                                     }
+=======
+```json
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-                                                ]
-                                    }
-                    }
-                ],
-        "errors":[]
-    }
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
-</details>
-
-
-<details>
-    <summary><b>GET</b> /api/modules/1</summary>
-
-
-
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "",
-        "data": 
+{
+    "status": 200,
+    "message": "",
+    "data": [
                 {
                     "id": 1,
                     "type": "CLOCK",
@@ -2272,37 +2673,69 @@ INT durationSeconds
                     "zIndex": 1,
                     "adCollectionId": null
                 },
-                
-        "errors":[]
-    }
-    
-    
-    RESPONSE 404
+                {
+                    "id": 2,
+                    "type": "ROTATING_AD",
+                    "config": {
+                                "transitionEffect": "fade",
+                                "defaultDurationSeconds": 10
+                            },
+                    "colPos": 1,
+                    "rowPos": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1,
+                    "adCollectionId": 1,
+                    "adCollection": {
+                                    "id": 1,
+                                    "name": "Rotating Ad Collection Custom",
+                                    "url": null,
+                                    "createdAt": "2026-03-15T02:45:45:00Z",
+                                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                                    "adContent": [
+                                                {
+                                                    "id": 1,
+                                                    "adCollectionId": 1,
+                                                    "name": "Image One",
+                                                    "url": "/localstorage/1.jpg",
+                                                    "displayOrder": 1,
+                                                    "durationSeconds": 10,
+                                                    "createdAt": "2026-03-15T02:45:45:00Z",
+                                                    "updatedAt": "2026-03-15T03:10:45:00Z"
+                                                }
 
-    {
-        "status": 404,
-        "message": "Module not found",
-        "data": null,
-        "errors":[
-            {"error": "Module with id 1 doesn't exist"}
-        ]
-    }
-    RESPONSE 500
+                                            ]
+                                }
+                }
+            ],
+    "errors":[]
+}
 
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
+```
+
+
+RESPONSE 500
+
+```json
+
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+
+```
+
 </details>
 
 
 <details>
-    <summary><b>POST</b> /api/modules</summary>
+    <summary><b>GET</b> /api/modules/1</summary>
 
+<<<<<<< HEAD
     REQUEST
     {
         "type": "CLOCK",
@@ -2320,9 +2753,11 @@ INT durationSeconds
         "zIndex": 1,
         "adCollectionId": null
     }
+=======
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-    RESPONSE 201
 
+<<<<<<< HEAD
     {
         "status": 201,
         "message": "Module created successfully",
@@ -2345,32 +2780,169 @@ INT durationSeconds
                 },
         "errors":[]
     }
+=======
+RESPONSE 200
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-    
-    RESPONSE 400
+```json
 
-    {
-        "status": 400,
-        "message": "Validation failed",
-        "data": null,
-        "errors":[
-            {"error": "Column is not defined"},
-            {"error": "Row is not defined"}
-        ]
-    }
-    
+{
+    "status": 200,
+    "message": "",
+    "data": 
+            {
+                "id": 1,
+                "type": "CLOCK",
+                "config": {
+                            "timezone": "America/New York",
+                            "format": "HH:mm:ss",
+                            "showDate": true,
+                            "dateFormat": "dd/MM/yyyy",
+                            "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                        },
+                "colPos": 1,
+                "rowPos": 1,
+                "colSpan": 1,
+                "rowSpan": 1,
+                "zIndex": 1,
+                "adCollectionId": null
+            },
+            
+    "errors":[]
+}
 
-    
-    RESPONSE 500
+```
 
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
+
+RESPONSE 404
+
+```json
+
+
+{
+    "status": 404,
+    "message": "Module not found",
+    "data": null,
+    "errors":[
+        {"error": "Module with id 1 doesn't exist"}
+    ]
+}
+
+```
+
+
+RESPONSE 500
+
+```json
+
+
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+
+```
+
+
+</details>
+
+
+<details>
+<summary><b>POST</b> /api/modules</summary>
+
+REQUEST
+
+```json
+
+{
+    "type": "CLOCK",
+    "config": {
+                "timezone": "America/New York",
+                "format": "HH:mm:ss",
+                "showDate": true,
+                "dateFormat": "dd/MM/yyyy",
+                "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+            },
+    "colPos": 1,
+    "rowPos": 1,
+    "colSpan": 1,
+    "rowSpan": 1,
+    "zIndex": 1,
+    "adCollectionId": null
+}
+
+
+```
+
+RESPONSE 201
+
+```json
+
+
+{
+    "status": 201,
+    "message": "Module created successfully",
+    "data": {
+                "id": 1,
+                "type": "CLOCK",
+                "config": {
+                            "timezone": "America/New York",
+                            "format": "HH:mm:ss",
+                            "showDate": true,
+                            "dateFormat": "dd/MM/yyyy",
+                            "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                        },
+                "colPos": 1,
+                "rowPos": 1,
+                "colSpan": 1,
+                "rowSpan": 1,
+                "zIndex": 1,
+                "adCollectionId": null
+            },
+    "errors":[]
+}
+
+```
+
+
+RESPONSE 400
+
+```json
+
+
+{
+    "status": 400,
+    "message": "Validation failed",
+    "data": null,
+    "errors":[
+        {"error": "Column is not defined"},
+        {"error": "Row is not defined"}
+    ]
+}
+
+
+```
+
+
+RESPONSE 500
+
+```json
+
+
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+
+```
 
 
 </details>
@@ -2381,6 +2953,7 @@ INT durationSeconds
 <details>
     <summary><b>PUT</b> /api/modules/1</summary>
 
+<<<<<<< HEAD
     REQUEST
     {
         "type": "CLOCK",
@@ -2398,10 +2971,33 @@ INT durationSeconds
         "zIndex": 5,                    // updated
         "adCollectionId": null
     }
+=======
+REQUEST
+
+```json
+
+{
+    "type": "CLOCK",
+    "config": {
+                "timezone": "America/New York",
+                "format": "HH:mm:ss",
+                "showDate": true,
+                "dateFormat": "dd/MM/yyyy",
+                "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+            },
+    "colPos": 1,
+    "rowPos": 1,
+    "colSpan": 1,
+    "rowSpan": 1,
+    "zIndex": 5,                    
+    "adCollectionId": null
+}
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
-    RESPONSE 200
+```
 
+<<<<<<< HEAD
     {
         "status": 200,
         "message": "Module updated successfully",
@@ -2424,32 +3020,67 @@ INT durationSeconds
                 },
         "errors":[]
     }
+=======
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
-    
-    RESPONSE 404
+RESPONSE 200
+```json
 
-    {
-        "status": 404,
-        "message": "Module not found",
-        "data": null,
-        "errors":[
-            {"error": "Module with id 1 doesn't exist"}
-        ]
-    }
-    
+{
+    "status": 200,
+    "message": "Module updated successfully",
+    "data": {
+                "id": 1,
+                "type": "CLOCK",
+                "config": {
+                            "timezone": "America/New York",
+                            "format": "HH:mm:ss",
+                            "showDate": true,
+                            "dateFormat": "dd/MM/yyyy",
+                            "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                        },
+                "colPos": 1,
+                "rowPos": 1,
+                "colSpan": 1,
+                "rowSpan": 1,
+                "zIndex": 5,            
+                "adCollectionId": null
+            },
+    "errors":[]
+}
 
-    
-    RESPONSE 500
+```
 
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
 
+RESPONSE 404
+```json
+
+{
+    "status": 404,
+    "message": "Module not found",
+    "data": null,
+    "errors":[
+        {"error": "Module with id 1 doesn't exist"}
+    ]
+}
+
+```
+
+
+RESPONSE 500
+
+```json
+
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+
+```
 </details>
 
 
@@ -2458,40 +3089,42 @@ INT durationSeconds
     <summary><b>DELETE</b> /api/modules/1</summary>
 
 
-    RESPONSE 200
+RESPONSE 200
 
-    {
-        "status": 200,
-        "message": "Module deleted successfully.",
-        "data": null,
-        "errors":[]
-    }
+```json
+{
+    "status": 200,
+    "message": "Module deleted successfully.",
+    "data": null,
+    "errors":[]
+}
+```
 
-    
-    RESPONSE 404
+RESPONSE 404
 
-    {
-        "status": 404,
-        "message": "Module not found",
-        "data": null,
-        "errors":[
-            {"error": "Module with id 1 doesn't exist"}
-        ]
-    }
-    
+```json
+{
+    "status": 404,
+    "message": "Module not found",
+    "data": null,
+    "errors":[
+        {"error": "Module with id 1 doesn't exist"}
+    ]
+}
+```
 
-    
-    RESPONSE 500
 
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -2536,40 +3169,41 @@ INT durationSeconds
     <summary><b>GET</b> /api/adCollections</summary>
 
 
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "",
-        "data": [
-                    {
-                        "id": 1,
-                        "name": "Custom Ad Collection",
-                        "url": null,
-                        "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z"
-                    },
-                    {
-                        "id": 2,
-                        "name": "Ad Collection Stored in Cloud",
-                        "url": "https://cdn.somecloudjson.com/march-events.json",
-                        "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z"
-                    },
-                ],
-        "errors":[]
-    }
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": [
+                {
+                    "id": 1,
+                    "name": "Custom Ad Collection",
+                    "url": null,
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T03:10:45:00Z"
+                },
+                {
+                    "id": 2,
+                    "name": "Ad Collection Stored in Cloud",
+                    "url": "https://cdn.somecloudjson.com/march-events.json",
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T03:10:45:00Z"
+                }
+            ],
+    "errors":[]
+}
+```
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 
 </details>
 
@@ -2579,114 +3213,119 @@ INT durationSeconds
 
 
 
-    RESPONSE 200
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": 
+            
+            {
+                "id": 2,
+                "name": "Ad Collection Stored in Cloud",
+                "url": "https://cdn.somecloudjson.com/march-events.json",
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T03:10:45:00Z",
+                "adContent": [
+                    {
+                        "id": 1,
+                        "url": "https://cdn.somecloudjson.com/assets/march-events-img1.jpg",
+                        "type": "IMAGE",
+                        "displayOrder": 1,
+                        "durationSeconds": 10
+                    },
+                    {
+                        "id": 2,
+                        "url": "https://cdn.somecloudjson.com/assets/march-events-video.mp4",
+                        "type": "VIDEO",
+                        "displayOrder": 2,
+                        "durationSeconds": 30
+                    }
+                ]
+            },
+            
+    "errors":[]
+}
+```
 
-    {
-        "status": 200,
-        "message": "",
-        "data": 
-                
-                {
-                    "id": 2,
-                    "name": "Ad Collection Stored in Cloud",
-                    "url": "https://cdn.somecloudjson.com/march-events.json",
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z",
-                    "adContent": [
-                        {
-                            "id": 1,
-                            "url": "https://cdn.somecloudjson.com/assets/march-events-img1.jpg",
-                            "type": "IMAGE",
-                            "displayOrder": 1,
-                            "durationSeconds": 10,
-                        },
-                        {
-                            "id": 2,
-                            "url": "https://cdn.somecloudjson.com/assets/march-events-video.mp4",
-                            "type": "VIDEO",
-                            "displayOrder": 2,
-                            "durationSeconds": 30,
-                        }
-                    ]
-                },
-                
-        "errors":[]
-    }
-    
-    
-    RESPONSE 404
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Ad collection not found",
+    "data": null,
+    "errors":[
+        {"error": "Ad collection with id 1 doesn't exist"}
+    ]
+}
 
-    {
-        "status": 404,
-        "message": "Ad collection not found",
-        "data": null,
-        "errors":[
-            {"error": "Ad collection with id 1 doesn't exist"}
-        ]
-    }
-    RESPONSE 500
+```
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
 </details>
 
 
 <details>
     <summary><b>POST</b> /api/adCollections</summary>
 
-    REQUEST
-    {
-        "id": 1,
-        "name": "Custom Ad Collection",
-        "url": null
-    }
+REQUEST
+```json
+{
+    "id": 1,
+    "name": "Custom Ad Collection",
+    "url": null
+}
+```
+RESPONSE 201
+```json
+{
+    "status": 201,
+    "message": "Ad collection created successfully",
+    "data": {
+                "id": 1,
+                "name": "Custom Ad Collection",
+                "url": null,
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T03:10:45:00Z"
+            },
+    "errors":[]
+}
+```
 
-    RESPONSE 201
+RESPONSE 400
+```json
+{
+    "status": 400,
+    "message": "Validation failed",
+    "data": null,
+    "errors":[
+        {"error": "Name is not defined"}
+    ]
+}
 
-    {
-        "status": 201,
-        "message": "Ad collection created successfully",
-        "data": {
-                    "id": 1,
-                    "name": "Custom Ad Collection",
-                    "url": null,
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z"
-                },
-        "errors":[]
-    }
+```
 
-    
-    RESPONSE 400
-
-    {
-        "status": 400,
-        "message": "Validation failed",
-        "data": null,
-        "errors":[
-            {"error": "Name is not defined"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 
 </details>
 
@@ -2696,70 +3335,71 @@ INT durationSeconds
 <details>
     <summary><b>PUT</b> /api/adCollections/1</summary>
 
-    REQUEST
-    {
-        "id": 2,
-        "name": "Ad Collection Stored in Cloud",
-        "url": "https://cdn.somecloudjson.com/march-events.json" // updated
-    }
+REQUEST
+```json
+{
+    "id": 2,
+    "name": "Ad Collection Stored in Cloud",
+    "url": "https://cdn.somecloudjson.com/march-events.json"
+}
+```
+
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Ad collection updated successfully",
+    "data": {
+                "id": 2,
+                "name": "Ad Collection Stored in Cloud",
+                "url": "https://cdn.somecloudjson.com/march-events.json",
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T03:10:45:00Z",
+                "adContent": [
+                    {
+                        "id": 1,
+                        "url": "https://cdn.somecloudjson.com/assets/march-events-img1.jpg",
+                        "type": "IMAGE",
+                        "displayOrder": 1,
+                        "durationSeconds": 10
+                    },
+                    {
+                        "id": 2,
+                        "url": "https://cdn.somecloudjson.com/assets/march-events-video.mp4",
+                        "type": "VIDEO",
+                        "displayOrder": 2,
+                        "durationSeconds": 30
+                    }
+                ]
+            },
+    "errors":[]
+}
+```
+
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Ad collection not found",
+    "data": null,
+    "errors":[
+        {"error": "Ad collection with id 1 doesn't exist"}
+    ]
+}
+```
 
 
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "Ad collection updated successfully",
-        "data": {
-                    "id": 2,
-                    "name": "Ad Collection Stored in Cloud",
-                    "url": "https://cdn.somecloudjson.com/march-events.json",
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z",
-                    "adContent": [
-                        {
-                            "id": 1,
-                            "url": "https://cdn.somecloudjson.com/assets/march-events-img1.jpg",
-                            "type": "IMAGE",
-                            "displayOrder": 1,
-                            "durationSeconds": 10,
-                        },
-                        {
-                            "id": 2,
-                            "url": "https://cdn.somecloudjson.com/assets/march-events-video.mp4",
-                            "type": "VIDEO",
-                            "displayOrder": 2,
-                            "durationSeconds": 30,
-                        }
-                    ]
-                },
-        "errors":[]
-    }
-
-    
-    RESPONSE 404
-
-    {
-        "status": 404,
-        "message": "Ad collection not found",
-        "data": null,
-        "errors":[
-            {"error": "Ad collection with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -2768,40 +3408,40 @@ INT durationSeconds
     <summary><b>DELETE</b> /api/adCollections/1</summary>
 
 
-    RESPONSE 200
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Ad collection deleted successfully.",
+    "data": null,
+    "errors":[]
+}
+```
 
-    {
-        "status": 200,
-        "message": "Ad collection deleted successfully.",
-        "data": null,
-        "errors":[]
-    }
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Module not found",
+    "data": null,
+    "errors":[
+        {"error": "Ad collection with id 1 doesn't exist"}
+    ]
+}
+```
 
-    
-    RESPONSE 404
 
-    {
-        "status": 404,
-        "message": "Module not found",
-        "data": null,
-        "errors":[
-            {"error": "Ad collection with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -2845,74 +3485,74 @@ INT durationSeconds
     <summary><b>GET</b> /api/adContent</summary>
 
 
-    RESPONSE 200
-
-    {
-        "status": 200,
-        "message": "",
-        "data": [
-                    {
-                        "id": 1,
-                        "name": "March Event Image",
-                        "url": "/localstorage/marchevent.jpg",
-                        "type": "IMAGE",
-                        "displayOrder": 2,
-                        "durationSeconds": 30,
-                        "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z",
-                        "adCollection": [{
-                                            "id": 1,
-                                            "name": "Custom Ad Collection",
-                                            "url": null,
-                                            "createdAt": "2026-03-15T02:45:45:00Z",
-                                            "updatedAt": "2026-03-15T03:10:45:00Z"
-                                        }
-                                    ]
-                    },
-                    {
-                        "id": 2,
-                        "name": "June Event Video",
-                        "url": "https://someremoteurl.com/juneevent.mp4",
-                        "type": "VIDEO",
-                        "displayOrder": 1,
-                        "durationSeconds": 30,
-                        "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z",
-                        "adCollection": [{
-                                            "id": 1,
-                                            "name": "Custom Ad Collection",
-                                            "url": null,
-                                            "createdAt": "2026-03-15T02:45:45:00Z",
-                                            "updatedAt": "2026-03-15T03:10:45:00Z"
-                                        }
-                                    ]
-                    },
-                    {
-                        "id": 2,
-                        "name": "Some Random Event",
-                        "url": "https://someremoteurl.com/somethingelse.mp4",
-                        "type": "VIDEO",
-                        "displayOrder": 1,
-                        "durationSeconds": 30,
-                        "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z",
-                        "adCollection": []
-                    },
-                ],
-        "errors":[]
-    }
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": [
+                {
+                    "id": 1,
+                    "name": "March Event Image",
+                    "url": "/localstorage/marchevent.jpg",
+                    "type": "IMAGE",
+                    "displayOrder": 2,
+                    "durationSeconds": 30,
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                    "adCollection": [{
+                                        "id": 1,
+                                        "name": "Custom Ad Collection",
+                                        "url": null,
+                                        "createdAt": "2026-03-15T02:45:45:00Z",
+                                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                                    }
+                                ]
+                },
+                {
+                    "id": 2,
+                    "name": "June Event Video",
+                    "url": "https://someremoteurl.com/juneevent.mp4",
+                    "type": "VIDEO",
+                    "displayOrder": 1,
+                    "durationSeconds": 30,
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                    "adCollection": [{
+                                        "id": 1,
+                                        "name": "Custom Ad Collection",
+                                        "url": null,
+                                        "createdAt": "2026-03-15T02:45:45:00Z",
+                                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                                    }
+                                ]
+                },
+                {
+                    "id": 2,
+                    "name": "Some Random Event",
+                    "url": "https://someremoteurl.com/somethingelse.mp4",
+                    "type": "VIDEO",
+                    "displayOrder": 1,
+                    "durationSeconds": 30,
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                    "adCollection": []
+                }
+            ],
+    "errors":[]
+}
+```
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -2921,111 +3561,114 @@ INT durationSeconds
 
 
 
-    RESPONSE 200
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "",
+    "data": 
+            
+            {
+                "id": 1,
+                "name": "March Event Image",
+                "url": "/localstorage/marchevent.jpg",
+                "type": "IMAGE",
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T03:10:45:00Z",
+                "adCollection": [{
+                                    "id": 1,
+                                    "name": "Custom Ad Collection",
+                                    "url": null,
+                                    "createdAt": "2026-03-15T02:45:45:00Z",
+                                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                                    "displayOrder": 2,
+                                    "durationSeconds": 30
+                                }
+                            ]
+            },
+            
+    "errors":[]
+}
+```
 
-    {
-        "status": 200,
-        "message": "",
-        "data": 
-                
-                {
-                    "id": 1,
-                    "name": "March Event Image",
-                    "url": "/localstorage/marchevent.jpg",
-                    "type": "IMAGE",
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z",
-                    "adCollection": [{
-                                        "id": 1,
-                                        "name": "Custom Ad Collection",
-                                        "url": null,
-                                        "createdAt": "2026-03-15T02:45:45:00Z",
-                                        "updatedAt": "2026-03-15T03:10:45:00Z",
-                                        "displayOrder": 2,
-                                        "durationSeconds": 30,
-                                    }
-                                ]
-                },
-                
-        "errors":[]
-    }
-    
-    
-    RESPONSE 404
-
-    {
-        "status": 404,
-        "message": "Ad content not found",
-        "data": null,
-        "errors":[
-            {"error": "Ad content with id 1 doesn't exist"}
-        ]
-    }
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Ad content not found",
+    "data": null,
+    "errors":[
+        {"error": "Ad content with id 1 doesn't exist"}
+    ]
+}
+```
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
 <details>
     <summary><b>POST</b> /api/adContent</summary>
 
-    REQUEST
-    {
-        "name": "March Event Image",
-        "url": "/localstorage/marchevent.jpg",
-        "type": "IMAGE"
-    }
+REQUEST
+```json
+{
+    "name": "March Event Image",
+    "url": "/localstorage/marchevent.jpg",
+    "type": "IMAGE"
+}
+```
+RESPONSE 201
+```json
+{
+    "status": 201,
+    "message": "Ad content created successfully",
+    "data": {
+                "id": 1,
+                "name": "March Event Image",
+                "url": "/localstorage/marchevent.jpg",
+                "type": "IMAGE",
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T03:10:45:00Z",
+                "adCollection": []
+            },
+    "errors":[]
+}
+```
 
-    RESPONSE 201
+RESPONSE 400
+```json
+{
+    "status": 400,
+    "message": "Validation failed",
+    "data": null,
+    "errors":[
+        {"error": "URL is not defined"}
+    ]
+}
+```
 
-    {
-        "status": 201,
-        "message": "Ad content created successfully",
-        "data": {
-                    "id": 1,
-                    "name": "March Event Image",
-                    "url": "/localstorage/marchevent.jpg",
-                    "type": "IMAGE",
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z",
-                    "adCollection": []
-                },
-        "errors":[]
-    }
 
-    
-    RESPONSE 400
-
-    {
-        "status": 400,
-        "message": "Validation failed",
-        "data": null,
-        "errors":[
-            {"error": "URL is not defined"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 
 </details>
 
@@ -3035,75 +3678,76 @@ INT durationSeconds
 <details>
     <summary><b>PUT</b> /api/adContent/1</summary>
 
-    REQUEST
-    {
-        "name": "March Event Image",
-        "url": "/localstorage/marchevent.jpg",
-        "type": "IMAGE",
-        "adCollection": [{                // updated . assigned to an ad collection
-                            "id": 1,
-                            "name": "Custom Ad Collection",
-                            "url": null,
-                            "createdAt": "2026-03-15T02:45:45:00Z",
-                            "updatedAt": "2026-03-15T03:10:45:00Z",
-                            "displayOrder": 2,
-                            "durationSeconds": 30
-                        }
-                    ]
-    }
+REQUEST
+```json
+{
+    "name": "March Event Image",
+    "url": "/localstorage/marchevent.jpg",
+    "type": "IMAGE",
+    "adCollection": [{                
+                        "id": 1,
+                        "name": "Custom Ad Collection",
+                        "url": null,
+                        "createdAt": "2026-03-15T02:45:45:00Z",
+                        "updatedAt": "2026-03-15T03:10:45:00Z",
+                        "displayOrder": 2,
+                        "durationSeconds": 30
+                    }
+                ]
+}
+```
 
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Ad content updated successfully",
+    "data": {
+                "id": 1,
+                "name": "March Event Image",
+                "url": "/localstorage/marchevent.jpg",
+                "type": "IMAGE",
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T03:10:45:00Z",
+                "adCollection": [{               
+                                    "id": 1,
+                                    "name": "Custom Ad Collection",
+                                    "url": null,
+                                    "createdAt": "2026-03-15T02:45:45:00Z",
+                                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                                    "displayOrder": 2,
+                                    "durationSeconds": 30
+                                }
+                            ]
+            },
+    "errors":[]
+}
+```
 
-    RESPONSE 200
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Ad content not found",
+    "data": null,
+    "errors":[
+        {"error": "Ad content with id 1 doesn't exist"}
+    ]
+}
 
-    {
-        "status": 200,
-        "message": "Ad content updated successfully",
-        "data": {
-                    "id": 1,
-                    "name": "March Event Image",
-                    "url": "/localstorage/marchevent.jpg",
-                    "type": "IMAGE",
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z"
-                    "adCollection": [{                // updated . assigned to an ad collection
-                                        "id": 1,
-                                        "name": "Custom Ad Collection",
-                                        "url": null,
-                                        "createdAt": "2026-03-15T02:45:45:00Z",
-                                        "updatedAt": "2026-03-15T03:10:45:00Z"
-                                        "displayOrder": 2,
-                                        "durationSeconds": 30
-                                    }
-                                ]
-                },
-        "errors":[]
-    }
+```
 
-    
-    RESPONSE 404
-
-    {
-        "status": 404,
-        "message": "Ad content not found",
-        "data": null,
-        "errors":[
-            {"error": "Ad content with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
 
 
@@ -3112,38 +3756,38 @@ INT durationSeconds
     <summary><b>DELETE</b> /api/adContent/1</summary>
 
 
-    RESPONSE 200
+RESPONSE 200
+```json
+{
+    "status": 200,
+    "message": "Ad content deleted successfully.",
+    "data": null,
+    "errors":[]
+}
+```
 
-    {
-        "status": 200,
-        "message": "Ad content deleted successfully.",
-        "data": null,
-        "errors":[]
-    }
+RESPONSE 404
+```json
+{
+    "status": 404,
+    "message": "Module not found",
+    "data": null,
+    "errors":[
+        {"error": "Ad content with id 1 doesn't exist"}
+    ]
+}
+```
 
-    
-    RESPONSE 404
 
-    {
-        "status": 404,
-        "message": "Module not found",
-        "data": null,
-        "errors":[
-            {"error": "Ad content with id 1 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
-    {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
-    }
-
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
+    "data": null,
+    "errors":[
+        {"error": "Unexpected error occurred"}
+    ]
+}
+```
 </details>
