@@ -2671,7 +2671,7 @@ RESPONSE 200
                     "colSpan": 1,
                     "rowSpan": 1,
                     "zIndex": 1,
-                    "adCollectionId": null
+                    "adCollection": null
                 },
                 {
                     "id": 2,
@@ -2872,7 +2872,7 @@ REQUEST
     "colSpan": 1,
     "rowSpan": 1,
     "zIndex": 1,
-    "adCollectionId": null
+    "adCollection": null
 }
 
 
@@ -2901,7 +2901,7 @@ RESPONSE 201
                 "colSpan": 1,
                 "rowSpan": 1,
                 "zIndex": 1,
-                "adCollectionId": null
+                "adCollection": null
             },
     "errors":[]
 }
@@ -2990,7 +2990,7 @@ REQUEST
     "colSpan": 1,
     "rowSpan": 1,
     "zIndex": 5,                    
-    "adCollectionId": null
+    "adCollection": null
 }
 >>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
@@ -3044,7 +3044,7 @@ RESPONSE 200
                 "colSpan": 1,
                 "rowSpan": 1,
                 "zIndex": 5,            
-                "adCollectionId": null
+                "adCollection": null
             },
     "errors":[]
 }
@@ -3482,7 +3482,7 @@ RESPONSE 500
 ##### JSON Request and Response
 
 <details>
-    <summary><b>GET</b> /api/adContent</summary>
+    <summary><b>GET</b> /api/adContents</summary>
 
 
 RESPONSE 200
@@ -3557,7 +3557,7 @@ RESPONSE 500
 
 
 <details>
-    <summary><b>GET</b> /api/adContent/1</summary>
+    <summary><b>GET</b> /api/adContents/1</summary>
 
 
 
@@ -3617,7 +3617,7 @@ RESPONSE 500
 
 
 <details>
-    <summary><b>POST</b> /api/adContent</summary>
+    <summary><b>POST</b> /api/adContents</summary>
 
 REQUEST
 ```json
@@ -3676,7 +3676,7 @@ RESPONSE 500
 
 
 <details>
-    <summary><b>PUT</b> /api/adContent/1</summary>
+    <summary><b>PUT</b> /api/adContents/1</summary>
 
 REQUEST
 ```json
@@ -3753,7 +3753,7 @@ RESPONSE 500
 
 
 <details>
-    <summary><b>DELETE</b> /api/adContent/1</summary>
+    <summary><b>DELETE</b> /api/adContents/1</summary>
 
 
 RESPONSE 200

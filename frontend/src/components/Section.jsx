@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 // ===== Section — a single content area within a layout =====
 
@@ -10,10 +10,84 @@ const SLIDESHOW_IMAGES = [
 ];
 
 function Section({ section, isSelected, onSelect }) {
+  const sectionRef = useRef(null);
+  const [flexPercent, setFlexPercent] = useState(null);
+
+  const handleResizeMouseDown = useCallback((e, direction) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const parent = el.parentElement;
+    const allSections = Array.from(parent.querySelectorAll(":scope > .section"));
+    const myIndex = allSections.indexOf(el);
+    const nextSection = allSections[myIndex + 1];
+
+    if (!nextSection) return;
+
+    const parentRect = parent.getBoundingClientRect();
+
+    const onMouseMove = (moveE) => {
+      const pRect = parent.getBoundingClientRect();
+
+      if (direction === "horizontal") {
+        const myStartX =
+          el.getBoundingClientRect().left - pRect.left;
+        const newWidth = moveE.clientX - pRect.left - myStartX;
+        const totalWidth = pRect.width;
+        const percent = Math.max(15, Math.min(85, (newWidth / totalWidth) * 100));
+
+        el.style.flex = `0 0 ${percent}%`;
+        nextSection.style.flex = `0 0 ${100 - percent}%`;
+      } else {
+        const myStartY =
+          el.getBoundingClientRect().top - pRect.top;
+        const newHeight = moveE.clientY - pRect.top - myStartY;
+        const totalHeight = pRect.height;
+        const percent = Math.max(15, Math.min(85, (newHeight / totalHeight) * 100));
+
+        el.style.flex = `0 0 ${percent}%`;
+        nextSection.style.flex = `0 0 ${100 - percent}%`;
+      }
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+
+      // Store final value in local state
+      const pRect = parent.getBoundingClientRect();
+      const elRect = el.getBoundingClientRect();
+      if (direction === "horizontal") {
+        const percent = (elRect.width / pRect.width) * 100;
+        setFlexPercent(Math.max(15, Math.min(85, percent)));
+      } else {
+        const percent = (elRect.height / pRect.height) * 100;
+        setFlexPercent(Math.max(15, Math.min(85, percent)));
+      }
+    };
+
+    document.body.style.cursor =
+      direction === "horizontal" ? "col-resize" : "row-resize";
+    document.body.style.userSelect = "none";
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }, []);
+
+  const inlineStyle = flexPercent != null
+    ? { flex: `0 0 ${flexPercent}%`, overflow: "hidden" }
+    : { overflow: "hidden" };
+
   return (
     <div
+      ref={sectionRef}
       className={`section ${isSelected ? "selected" : ""}`}
       onClick={() => onSelect(section.id)}
+      style={inlineStyle}
     >
       {section.content ? (
         <div className="section-content">
@@ -27,6 +101,14 @@ function Section({ section, isSelected, onSelect }) {
           Click to add {section.contentType}
         </span>
       )}
+      <div
+        className="resize-handle resize-handle-right"
+        onMouseDown={(e) => handleResizeMouseDown(e, "horizontal")}
+      />
+      <div
+        className="resize-handle resize-handle-bottom"
+        onMouseDown={(e) => handleResizeMouseDown(e, "vertical")}
+      />
     </div>
   );
 }
