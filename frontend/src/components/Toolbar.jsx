@@ -1,6 +1,6 @@
 // ===== Toolbar — top bar with editor actions =====
 
-const LAYOUTS = ["single", "two-columns", "header-two-columns", "grid"];
+const LAYOUTS = ["single", "two-columns", "header-two-columns", "grid", "right-column", "bottom-row", "six-section-grid"];
 
 function Toolbar({ currentLayout, onAddSlide, onChangeLayout, onPreview, onLogout }) {
   return (

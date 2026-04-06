@@ -51,6 +51,49 @@ function LayoutRenderer({ layout, sections, selectedSectionId, onSelectSection }
         </div>
       );
 
+    // Large left section + 3 stacked right sections (65/35)
+    case "right-column":
+      return (
+        <div className="layout-right-column">
+          <div className="right-col-left">
+            {sections[0] && renderSection(sections[0])}
+          </div>
+          <div className="right-col-right">
+            {sections[1] && renderSection(sections[1])}
+            {sections[2] && renderSection(sections[2])}
+            {sections[3] && renderSection(sections[3])}
+          </div>
+        </div>
+      );
+
+    // Large top section + 3 bottom sections in a row (65/35)
+    case "bottom-row":
+      return (
+        <div className="layout-bottom-row">
+          <div className="bottom-row-top">
+            {sections[0] && renderSection(sections[0])}
+          </div>
+          <div className="bottom-row-bottom">
+            {sections[1] && renderSection(sections[1])}
+            {sections[2] && renderSection(sections[2])}
+            {sections[3] && renderSection(sections[3])}
+          </div>
+        </div>
+      );
+
+    // 6-section grid: large top-left, 2 stacked right, 3 bottom
+    case "six-section-grid":
+      return (
+        <div className="layout-six-section-grid">
+          {sections[0] && <div className="six-topleft">{renderSection(sections[0])}</div>}
+          {sections[1] && <div className="six-topright">{renderSection(sections[1])}</div>}
+          {sections[2] && <div className="six-midright">{renderSection(sections[2])}</div>}
+          {sections[3] && <div className="six-botleft">{renderSection(sections[3])}</div>}
+          {sections[4] && <div className="six-botmid">{renderSection(sections[4])}</div>}
+          {sections[5] && <div className="six-botright">{renderSection(sections[5])}</div>}
+        </div>
+      );
+
     default:
       return (
         <div className="layout-single">

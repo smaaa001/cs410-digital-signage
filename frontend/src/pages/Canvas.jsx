@@ -25,6 +25,26 @@ const LAYOUT_TEMPLATES = {
     { id: 3, contentType: "text", content: "" },
     { id: 4, contentType: "text", content: "" },
   ],
+  "right-column": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+  ],
+  "bottom-row": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+  ],
+  "six-section-grid": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+    { id: 5, contentType: "text", content: "" },
+    { id: 6, contentType: "text", content: "" },
+  ],
 };
 
 // Helper to create a fresh slide
@@ -118,6 +138,26 @@ function Canvas() {
     [currentSlideIndex]
   );
 
+  // ===== Slide Reorder =====
+  const reorderSlides = useCallback(
+    (fromIndex, toIndex) => {
+      setSlides((prev) => {
+        const updated = [...prev];
+        const [moved] = updated.splice(fromIndex, 1);
+        updated.splice(toIndex, 0, moved);
+        return updated;
+      });
+      // Adjust currentSlideIndex to follow the moved slide
+      setCurrentSlideIndex((prev) => {
+        if (prev === fromIndex) return toIndex;
+        if (fromIndex < prev && toIndex >= prev) return prev - 1;
+        if (fromIndex > prev && toIndex <= prev) return prev + 1;
+        return prev;
+      });
+    },
+    []
+  );
+
   // ===== Preview (stub) =====
   const handlePreview = useCallback(() => {
     console.log("Preview slides:", JSON.stringify(slides, null, 2));
@@ -147,6 +187,7 @@ function Canvas() {
           onSwitchSlide={switchSlide}
           onAddSlide={addSlide}
           onDeleteSlide={deleteSlide}
+          onReorderSlides={reorderSlides}
         />
 
         {/* Center — Canvas */}
