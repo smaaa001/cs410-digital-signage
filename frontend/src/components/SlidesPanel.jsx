@@ -1,6 +1,57 @@
+import { useState, useCallback } from "react";
+
 // ===== SlidesPanel — left sidebar showing slide thumbnails =====
 
-function SlidesPanel({ slides, currentSlideIndex, onSwitchSlide, onAddSlide, onDeleteSlide }) {
+function SlidesPanel({
+  slides,
+  currentSlideIndex,
+  onSwitchSlide,
+  onAddSlide,
+  onDeleteSlide,
+  onReorderSlides,
+}) {
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState(null);
+
+  const handleDragStart = useCallback((e, index) => {
+    setDragIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", index.toString());
+  }, []);
+
+  const handleDragOver = useCallback(
+    (e, index) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (index !== dropTargetIndex) {
+        setDropTargetIndex(index);
+      }
+    },
+    [dropTargetIndex]
+  );
+
+  const handleDragLeave = useCallback(() => {
+    setDropTargetIndex(null);
+  }, []);
+
+  const handleDrop = useCallback(
+    (e, toIndex) => {
+      e.preventDefault();
+      const fromIndex = dragIndex;
+      setDragIndex(null);
+      setDropTargetIndex(null);
+
+      if (fromIndex == null || fromIndex === toIndex) return;
+      onReorderSlides(fromIndex, toIndex);
+    },
+    [dragIndex, onReorderSlides]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setDragIndex(null);
+    setDropTargetIndex(null);
+  }, []);
+
   return (
     <div className="slides-panel">
       <div className="slides-panel-header">
@@ -8,12 +59,17 @@ function SlidesPanel({ slides, currentSlideIndex, onSwitchSlide, onAddSlide, onD
         <button onClick={onAddSlide}>+</button>
       </div>
 
-      {/* FUTURE: Support drag-and-drop reordering */}
       {slides.map((slide, index) => (
         <div
           key={index}
-          className={`slide-thumb ${index === currentSlideIndex ? "active" : ""}`}
+          className={`slide-thumb${index === currentSlideIndex ? " active" : ""}${dragIndex === index ? " dragging" : ""}${dropTargetIndex === index && dragIndex !== index ? " drop-target" : ""}`}
           onClick={() => onSwitchSlide(index)}
+          draggable
+          onDragStart={(e) => handleDragStart(e, index)}
+          onDragOver={(e) => handleDragOver(e, index)}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, index)}
+          onDragEnd={handleDragEnd}
         >
           {slides.length > 1 && (
             <button
