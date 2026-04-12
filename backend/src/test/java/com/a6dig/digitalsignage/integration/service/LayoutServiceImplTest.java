@@ -153,7 +153,7 @@ public class LayoutServiceImplTest {
 
         requestDto.setSlots(List.of(
                 this.buildLayoutSlotRequestDto(null, 1, 1, 1, 1, 0),
-                this.buildLayoutSlotRequestDto(1L,1 , 2, 1, 1, 0)
+                this.buildLayoutSlotRequestDto(null,1 , 2, 1, 1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> result = this.layoutServiceImpl.createLayout(requestDto);
@@ -270,7 +270,7 @@ public class LayoutServiceImplTest {
 
         request.setSlots(List.of(
                 this.buildLayoutSlotRequestDto(null,1, 1, 1, 1, 0),
-                this.buildLayoutSlotRequestDto(1L,1, 2, 1, 1, 0)
+                this.buildLayoutSlotRequestDto(null,1, 2, 1, 1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);
@@ -453,7 +453,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 2, 2);
         request.setSlots(List.of(
                 this.buildLayoutSlotRequestDto(null,1, 1, 1, 1, 0),
-                this.buildLayoutSlotRequestDto(1L,1, 2, 1, 1, 0)
+                this.buildLayoutSlotRequestDto(null,1, 2, 1, 1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);
