@@ -32,6 +32,19 @@ body {
     margin-bottom: 25px;
 }
 
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header button {
+    text-align: center;
+    padding: 15px;
+    background-color: white;
+    color: black;
+}
+
 /* --------------------- */
 
 .groupcard {
@@ -44,6 +57,19 @@ body {
 
 .groupcard h3 {
     color: black;
+}
+
+.groupcard-UI {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.groupcard-UI button {
+    text-align: center;
+    padding: 10px;
+    background-color: white;
+    color: black; 
 }
 
 /* --------------------- */
@@ -60,8 +86,21 @@ body {
     color: black;
 }
 
-.thing {
+.devices-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;   
+}
+
+.devices-UI {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.devices-UI button {
+    text-align: center;
+    padding: 10px;
+    background-color: white;
+    color: black; 
 }
