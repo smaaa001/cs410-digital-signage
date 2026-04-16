@@ -131,8 +131,8 @@ function Dashboard() {
             </div>
             <div className="dash-stat">
               <div className="dash-stat-label">Online now</div>
-              <div className="dash-stat-num green">{online}</div>
-              <div className="dash-stat-foot red">{offline} offline</div>
+              <div className="dash-stat-num">{online}</div>
+              <div className="dash-stat-foot">{offline} offline</div>
             </div>
             <div className="dash-stat">
               <div className="dash-stat-label">Active layouts</div>
