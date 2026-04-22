@@ -1039,7 +1039,7 @@ classDiagram
 ```
 
 
-## API Endpoints
+## API Endpoints    
 
 ### Authentication
 <table>
