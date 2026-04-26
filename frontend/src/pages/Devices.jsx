@@ -16,6 +16,8 @@ function Devices() {
             <h1>Device Management</h1>
             <h2>Manage displays and device groups</h2>
 
+            
+
             <DeviceGroups />
             
             <DeviceList />
@@ -39,7 +41,7 @@ function DeviceGroups() {
 
 function GroupCards() {
     return(
-        <div className="groupcard">
+        <div className="card">
             <div className="section-header">
                 <h3>Campus Center</h3>
 
