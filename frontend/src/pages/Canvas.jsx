@@ -6,6 +6,8 @@ import LayoutRenderer from "../components/LayoutRenderer";
 import PropertiesPanel from "../components/PropertiesPanel";
 import "../styles/canvas.css";
 
+const SLIDE_ROW_OFFSET = 100;
+
 // ===== Layout Definitions =====
 const LAYOUT_TEMPLATES = {
   single: [{ id: 1, contentType: "text", content: "" }],
@@ -125,27 +127,6 @@ function detectTemplate(cols, rows, slotCount) {
   return "single";
 }
 
-function parseLayoutName(name) {
-  if (!name) return { displayName: "", template: null };
-  const idx = name.lastIndexOf("::");
-  if (idx === -1) return { displayName: name, template: null };
-  return {
-    displayName: name.substring(0, idx),
-    template: name.substring(idx + 2),
-  };
-}
-
-// Layout.name is VARCHAR(50) — keep the encoded name within that limit
-function encodeLayoutName(displayName, template) {
-  const suffix = `::${template}`;
-  const maxDisplayLen = 50 - suffix.length;
-  const truncated =
-    displayName.length > maxDisplayLen
-      ? displayName.substring(0, maxDisplayLen)
-      : displayName;
-  return `${truncated}${suffix}`;
-}
-
 function createSlide(layout = "single") {
   return {
     layout,
@@ -161,59 +142,92 @@ function Canvas() {
   const [slides, setSlides] = useState([createSlide("two-columns")]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
-  const [activeLayoutId, setActiveLayoutId] = useState(layoutIdParam);
   const [layoutDisplayName, setLayoutDisplayName] = useState("");
-  const [savedSlotIds, setSavedSlotIds] = useState([]);
-  const [savedModuleIds, setSavedModuleIds] = useState([]);
   const [saveStatus, setSaveStatus] = useState(null);
+
+  const [savedLayoutId, setSavedLayoutId] = useState(null);
+  const [savedModuleIds, setSavedModuleIds] = useState([]);
 
   const currentSlide = slides[currentSlideIndex];
 
   useEffect(() => {
-    function loadLayout(layout) {
-      const { displayName, template: savedTemplate } = parseLayoutName(
-        layout.name
-      );
-      setLayoutDisplayName(displayName || layout.name);
-      setActiveLayoutId(layout.id);
+    function loadFromLayout(layout) {
+      const rawName = layout.name || "";
+      const cleanName = rawName.includes("::")
+        ? rawName
+            .substring(0, rawName.lastIndexOf("::"))
+            .replace(/\[\d+\]$/, "")
+        : rawName;
+      setLayoutDisplayName(cleanName);
+      setSavedLayoutId(layout.id);
 
       const slots = layout.slots ?? [];
-      const sortedSlots = [...slots].sort(
-        (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0)
-      );
-      const slotCount = sortedSlots.length;
-      const template =
-        savedTemplate && LAYOUT_TEMPLATES[savedTemplate]
-          ? savedTemplate
-          : detectTemplate(layout.cols, layout.rows, slotCount);
+      if (slots.length === 0) {
+        setSlides([createSlide("two-columns")]);
+        setCurrentSlideIndex(0);
+        setSavedModuleIds([]);
+        console.log("Loaded empty layout, showing default slide");
+        return;
+      }
 
-      // Rebuild sections from template, restoring saved content from module.config
-      const templateSections = LAYOUT_TEMPLATES[template];
-      const sections = templateSections.map((defaultSection, i) => {
-        const slot = sortedSlots[i];
-        const config = slot?.module?.config;
-        if (config && (config.contentType || config.content)) {
-          return {
-            ...defaultSection,
-            contentType: config.contentType || defaultSection.contentType,
-            content: config.content || "",
-          };
+      const slideGroups = new Map();
+      for (const slot of slots) {
+        const slideIdx = Math.floor((slot.rowPos - 1) / SLIDE_ROW_OFFSET);
+        if (!slideGroups.has(slideIdx)) slideGroups.set(slideIdx, []);
+        slideGroups.get(slideIdx).push(slot);
+      }
+
+      const sortedIndices = [...slideGroups.keys()].sort((a, b) => a - b);
+      const newSlides = [];
+      const newModuleIds = [];
+
+      for (const slideIdx of sortedIndices) {
+        const slideSlots = slideGroups.get(slideIdx);
+        slideSlots.sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0));
+
+        const firstConfig = slideSlots[0]?.module?.config;
+        let template = firstConfig?.template;
+        if (!template || !LAYOUT_TEMPLATES[template]) {
+          template = detectTemplate(
+            layout.cols,
+            layout.rows,
+            slideSlots.length
+          );
         }
-        return { ...defaultSection };
-      });
 
-      setSlides([{ layout: template, sections }]);
+        const templateSections = LAYOUT_TEMPLATES[template];
+        const sections = templateSections.map((defaultSection, i) => {
+          const slot = slideSlots[i];
+          const config = slot?.module?.config;
+          if (config && (config.contentType || config.content)) {
+            return {
+              ...defaultSection,
+              contentType: config.contentType || defaultSection.contentType,
+              content: config.content || "",
+            };
+          }
+          return { ...defaultSection };
+        });
+
+        newSlides.push({ layout: template, sections });
+        newModuleIds.push(slideSlots.map((s) => s.module?.id ?? null));
+      }
+
+      setSlides(newSlides);
       setCurrentSlideIndex(0);
       setSelectedSectionId(null);
-      setSavedSlotIds(sortedSlots.map((s) => s.id));
-      setSavedModuleIds(sortedSlots.map((s) => s.module?.id ?? null));
+      setSavedModuleIds(newModuleIds);
+
+      console.log(
+        `Loaded ${newSlides.length} slide(s) from layout ${layout.id}`
+      );
     }
 
     if (layoutIdParam) {
       fetch(`/api/layouts/${layoutIdParam}`)
         .then((r) => r.json())
         .then((res) => {
-          if (res.data) loadLayout(res.data);
+          if (res.data) loadFromLayout(res.data);
         })
         .catch((err) => console.error("Failed to load layout:", err));
     } else {
@@ -221,96 +235,132 @@ function Canvas() {
         .then((r) => r.json())
         .then((res) => {
           const layouts = res.data ?? [];
-          if (layouts.length > 0) loadLayout(layouts[layouts.length - 1]);
+          if (layouts.length > 1) {
+            console.warn(
+              `Found ${layouts.length} layouts. IDs: ${layouts.map((l) => l.id).join(", ")}. ` +
+                `These may include orphaned layouts from previous saves. Loading the most recent one (ID: ${layouts[layouts.length - 1].id}).`
+            );
+          }
+          if (layouts.length > 0) loadFromLayout(layouts[layouts.length - 1]);
         })
         .catch((err) => console.error("Failed to load layouts:", err));
     }
   }, [layoutIdParam]);
 
-  // ===== Save — persist modules (content) then layout (structure) =====
+  // ===== Save — persist all slides into one layout =====
   const handleSave = useCallback(async () => {
-    if (!activeLayoutId) return;
     setSaveStatus("saving");
 
     try {
-      const slide = slides[currentSlideIndex] || slides[0];
-      const gridInfo =
-        TEMPLATE_GRID_MAP[slide.layout] || TEMPLATE_GRID_MAP.single;
+      const newModuleIds = [];
+      for (let slideIdx = 0; slideIdx < slides.length; slideIdx++) {
+        const slide = slides[slideIdx];
+        const existingModules = savedModuleIds[slideIdx] || [];
+        const slideModuleIds = await Promise.all(
+          slide.sections.map(async (section, i) => {
+            const moduleData = {
+              name: `slide-${slideIdx}-section-${i + 1}`,
+              type: "CLOCK",
+              config: {
+                slideIndex: slideIdx,
+                template: slide.layout,
+                contentType: section.contentType,
+                content: section.content,
+              },
+              adCollection: null,
+            };
 
-      // Step 1: create or update a Module for each section
-      const moduleIds = await Promise.all(
-        slide.sections.map(async (section, i) => {
-          const moduleData = {
-            name: `section-${i + 1}`,
-            type: "CLOCK",
-            config: {
-              contentType: section.contentType,
-              content: section.content,
-            },
-            adCollection: null,
-          };
+            const existingId = existingModules[i];
+            if (existingId) {
+              const res = await fetch(`/api/modules/${existingId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(moduleData),
+              });
+              if (!res.ok)
+                throw new Error(
+                  `Module update failed for slide ${slideIdx}, section ${i}`
+                );
+              const data = await res.json();
+              return data.data?.id ?? existingId;
+            }
 
-          const existingId = savedModuleIds[i];
-          if (existingId) {
-            const res = await fetch(`/api/modules/${existingId}`, {
-              method: "PUT",
+            const res = await fetch("/api/modules", {
+              method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(moduleData),
             });
-            if (!res.ok) throw new Error(`Module update failed for section ${i}`);
+            if (!res.ok)
+              throw new Error(
+                `Module creation failed for slide ${slideIdx}, section ${i}`
+              );
             const data = await res.json();
-            return data.data?.id ?? existingId;
-          }
+            return data.data?.id;
+          })
+        );
+        newModuleIds.push(slideModuleIds);
+      }
 
-          const res = await fetch("/api/modules", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(moduleData),
+      if (savedLayoutId) {
+        await fetch(`/api/layouts/${savedLayoutId}/slots/all`, {
+          method: "DELETE",
+        });
+      }
+
+      const allSlots = [];
+      for (let slideIdx = 0; slideIdx < slides.length; slideIdx++) {
+        const slide = slides[slideIdx];
+        const gridInfo =
+          TEMPLATE_GRID_MAP[slide.layout] || TEMPLATE_GRID_MAP.single;
+        gridInfo.slots.forEach((slotPos, i) => {
+          allSlots.push({
+            moduleId: newModuleIds[slideIdx][i] ?? null,
+            colPos: slotPos.colPos,
+            rowPos: slideIdx * SLIDE_ROW_OFFSET + slotPos.rowPos,
+            colSpan: slotPos.colSpan,
+            rowSpan: slotPos.rowSpan,
+            zIndex: slideIdx * SLIDE_ROW_OFFSET + i + 1,
           });
-          if (!res.ok) throw new Error(`Module creation failed for section ${i}`);
-          const data = await res.json();
-          return data.data?.id;
-        })
-      );
+        });
+      }
 
-      // Step 2: save the layout with slot positions + module references
-      const slots = gridInfo.slots.map((slotPos, i) => ({
-        id: i < savedSlotIds.length ? savedSlotIds[i] : null,
-        moduleId: moduleIds[i] ?? null,
-        colPos: slotPos.colPos,
-        rowPos: slotPos.rowPos,
-        colSpan: slotPos.colSpan,
-        rowSpan: slotPos.rowSpan,
-        zIndex: i + 1,
-      }));
-
-      const body = {
-        name: encodeLayoutName(
-          layoutDisplayName || slide.layout,
-          slide.layout
-        ),
-        cols: gridInfo.cols,
-        rows: gridInfo.rows,
-        slots,
+      const firstGrid =
+        TEMPLATE_GRID_MAP[slides[0].layout] || TEMPLATE_GRID_MAP.single;
+      const layoutBody = {
+        name: layoutDisplayName || "Canvas",
+        cols: firstGrid.cols,
+        rows: firstGrid.rows,
+        slots: allSlots,
       };
 
-      const layoutRes = await fetch(`/api/layouts/${activeLayoutId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
+      console.log(
+        `Save payload: ${slides.length} slide(s), ${allSlots.length} total slots`,
+        layoutBody
+      );
+
+      let layoutRes;
+      if (savedLayoutId) {
+        layoutRes = await fetch(`/api/layouts/${savedLayoutId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(layoutBody),
+        });
+      } else {
+        layoutRes = await fetch("/api/layouts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(layoutBody),
+        });
+      }
       if (!layoutRes.ok) throw new Error("Layout save failed");
       const layoutData = await layoutRes.json();
 
-      // Update tracked IDs from the response
-      if (layoutData.data?.slots) {
-        const returnedSlots = [...layoutData.data.slots].sort(
-          (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0)
-        );
-        setSavedSlotIds(returnedSlots.map((s) => s.id));
-        setSavedModuleIds(returnedSlots.map((s) => s.module?.id ?? null));
-      }
+      setSavedLayoutId(layoutData.data?.id);
+      setSavedModuleIds(newModuleIds);
 
+      console.log(
+        `Saved ${slides.length} slide(s) with ${allSlots.length} total slots to layout ${layoutData.data?.id}`
+      );
       setSaveStatus("saved");
       setTimeout(() => setSaveStatus(null), 2000);
     } catch (err) {
@@ -318,14 +368,7 @@ function Canvas() {
       setSaveStatus("error");
       setTimeout(() => setSaveStatus(null), 3000);
     }
-  }, [
-    activeLayoutId,
-    slides,
-    currentSlideIndex,
-    layoutDisplayName,
-    savedSlotIds,
-    savedModuleIds,
-  ]);
+  }, [slides, layoutDisplayName, savedLayoutId, savedModuleIds]);
 
   // ===== Slide Operations =====
   const addSlide = useCallback(() => {
@@ -343,6 +386,7 @@ function Canvas() {
     (index) => {
       if (slides.length <= 1) return;
       setSlides((prev) => prev.filter((_, i) => i !== index));
+      setSavedModuleIds((prev) => prev.filter((_, i) => i !== index));
       setCurrentSlideIndex((prev) => {
         if (prev >= slides.length - 1) return Math.max(0, slides.length - 2);
         if (index <= prev) return Math.max(0, prev - 1);
@@ -398,12 +442,14 @@ function Canvas() {
 
   // ===== Slide Reorder =====
   const reorderSlides = useCallback((fromIndex, toIndex) => {
-    setSlides((prev) => {
+    const reorder = (prev) => {
       const updated = [...prev];
       const [moved] = updated.splice(fromIndex, 1);
       updated.splice(toIndex, 0, moved);
       return updated;
-    });
+    };
+    setSlides(reorder);
+    setSavedModuleIds(reorder);
     setCurrentSlideIndex((prev) => {
       if (prev === fromIndex) return toIndex;
       if (fromIndex < prev && toIndex >= prev) return prev - 1;
@@ -448,9 +494,12 @@ function Canvas() {
             {currentSlide && (
               <LayoutRenderer
                 layout={currentSlide.layout}
-                sections={currentSlide.sections}
+                slots={currentSlide.sections}
                 selectedSectionId={selectedSectionId}
                 onSelectSection={selectSection}
+                rows={TEMPLATE_GRID_MAP[currentSlide.layout]?.rows ?? 1}
+                cols={TEMPLATE_GRID_MAP[currentSlide.layout]?.cols ?? 1}
+                gridSlots={TEMPLATE_GRID_MAP[currentSlide.layout]?.slots ?? []}
               />
             )}
           </div>
