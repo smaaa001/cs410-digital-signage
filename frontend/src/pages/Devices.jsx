@@ -17,9 +17,10 @@ function Devices() {
             <h1>Device Management</h1>
             <h2>Manage displays and device groups</h2>
 
-            <DeviceGroups groups={groups} setGroups={setGroups} devices={devices} />
-            
             <DeviceList devices={devices} setDevices={setDevices} />
+            
+            <DeviceGroups groups={groups} setGroups={setGroups} devices={devices} />
+
         </div>
     )
 }
@@ -27,9 +28,19 @@ function Devices() {
 // Device Groups Section
 function DeviceGroups({ groups, setGroups, devices }) {
     const [showModal, setShowModal] = useState(false);
+    const [editingGroup, setEditingGroup] = useState(null);
 
     function handleDelete(id) {
         setGroups(groups.filter(group => group.id !== id));
+    }
+
+    function handleEdit(group) {
+        setEditingGroup(group);
+    }
+
+    function handleEditSave(updatedGroup) {
+        setGroups(groups.map(g => g.id === updatedGroup.id ? updatedGroup : g));
+        setEditingGroup(null);
     }
 
     return (
@@ -40,7 +51,7 @@ function DeviceGroups({ groups, setGroups, devices }) {
             </div>
 
             {groups.map(group => (
-                <GroupCard key={group.id} group={group} onDelete={handleDelete} />
+                <GroupCard key={group.id} group={group} onDelete={handleDelete} onEdit={handleEdit} />
             ))}
 
             {showModal && (
@@ -53,17 +64,26 @@ function DeviceGroups({ groups, setGroups, devices }) {
                     devices={devices}
                 />
             )}
+
+            {editingGroup && (
+                <NewGroupModal
+                    onClose={() => setEditingGroup(null)}
+                    onAdd={handleEditSave}
+                    devices={devices}
+                    existingGroup={editingGroup}
+                />
+            )}
         </div>
     )
 }
 
-function GroupCard({ group, onDelete }) {
+function GroupCard({ group, onDelete, onEdit }) {
     return (
         <div className="card">
             <div className="card-header">
                 <h3>{group.name}</h3>
                 <div className="card-UI">
-                    <button>Edit</button>
+                    <button onClick={() => onEdit(group)}>Edit</button>
                     <button onClick={() => onDelete(group.id)}>Delete</button>
                 </div>
             </div>
@@ -120,6 +140,26 @@ function DeviceList({ devices, setDevices }){
     )
 }
 
+function StatusBadge({ isOnline }) {
+    const styles = {
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '4px 12px',
+        borderRadius: '6px',
+        fontWeight: '600',
+        fontSize: '0.85rem',
+        color: 'white',
+        backgroundColor: isOnline ? '#22c55e' : '#dc2626',
+    };
+
+    return (
+        <span style={styles}>
+            {isOnline ? '✓' : '✕'} {isOnline ? 'Online' : 'Offline'}
+        </span>
+    );
+}
+
 function DeviceCard({ device, onDelete, onEdit }) {
     return (
         <div className="card">
@@ -127,6 +167,7 @@ function DeviceCard({ device, onDelete, onEdit }) {
                 <h3>{device.name}</h3>
                 <div className="card-UI">
                     {/* <button>View</button> */}
+                    <StatusBadge isOnline={device.isOnline} />
                     <button onClick={() => onEdit(device)}>Edit</button>
                     <button onClick={() => onDelete(device.id)}>Delete</button>
                 </div>
@@ -136,25 +177,30 @@ function DeviceCard({ device, onDelete, onEdit }) {
     );
 }
 
-function NewGroupModal({ onClose, onAdd, devices }) {
-    const [name, setName] = useState('');
-    const [selectedIds, setSelectedIds] = useState([]);
+function NewGroupModal({ onClose, onAdd, devices, existingGroup }) {
+    const [name, setName] = useState(existingGroup?.name || '');
+    const [selectedIds, setSelectedIds] = useState(existingGroup?.deviceIds || []);
 
-    function toggleDevice(id) {
-        setSelectedIds(prev =>
-            prev.includes(id) ? prev.filter(d => d !== id) : [...prev, id]
-        );
+    const availableDevices = devices.filter(d => !selectedIds.includes(d.id));
+    const addedDevices = devices.filter(d => selectedIds.includes(d.id));
+
+    function addDevice(id) {
+        setSelectedIds(prev => [...prev, id]);
+    }
+
+    function removeDevice(id) {
+        setSelectedIds(prev => prev.filter(d => d !== id));
     }
 
     function handleSubmit() {
         if (!name) return;
-        onAdd({ id: Date.now(), name, deviceIds: selectedIds });
+        onAdd({ id: existingGroup?.id ?? Date.now(), name, deviceIds: selectedIds });
     }
 
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal" onClick={e => e.stopPropagation()}>
-                <h2>New Device Group</h2>
+                <h2>{existingGroup ? 'Edit Device Group' : 'New Device Group'}</h2>
 
                 <label>Name</label>
                 <input
@@ -163,25 +209,53 @@ function NewGroupModal({ onClose, onAdd, devices }) {
                     placeholder="Group name"
                 />
 
-                <label>Devices</label>
-                {devices.length === 0 ? (
-                    <p style={{ color: '#888' }}>No devices added yet.</p>
-                ) : (
-                    devices.map(device => (
-                        <div key={device.id} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <input
-                                type="checkbox"
-                                checked={selectedIds.includes(device.id)}
-                                onChange={() => toggleDevice(device.id)}
-                            />
-                            <span>{device.name}</span>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                    <div style={{ flex: 1 }}>
+                        <label>Devices</label>
+                        <div style={{ border: '1px solid #ccc', borderRadius: '6px', minHeight: '100px', padding: '6px', marginTop: '4px' }}>
+                            {availableDevices.length === 0 ? (
+                                <p style={{ color: '#aaa', fontSize: '0.85rem', margin: '4px' }}>No devices</p>
+                            ) : (
+                                availableDevices.map(device => (
+                                    <div
+                                        key={device.id}
+                                        onClick={() => addDevice(device.id)}
+                                        style={{ padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', marginBottom: '4px', background: '#f5f5f5' }}
+                                        onMouseEnter={e => e.currentTarget.style.background = '#e0e0e0'}
+                                        onMouseLeave={e => e.currentTarget.style.background = '#f5f5f5'}
+                                    >
+                                        {device.name}
+                                    </div>
+                                ))
+                            )}
                         </div>
-                    ))
-                )}
+                    </div>
+
+                    <div style={{ flex: 1 }}>
+                        <label>Added Devices</label>
+                        <div style={{ border: '1px solid #ccc', borderRadius: '6px', minHeight: '100px', padding: '6px', marginTop: '4px' }}>
+                            {addedDevices.length === 0 ? (
+                                <p style={{ color: '#aaa', fontSize: '0.85rem', margin: '4px' }}>None added</p>
+                            ) : (
+                                addedDevices.map(device => (
+                                    <div
+                                        key={device.id}
+                                        onClick={() => removeDevice(device.id)}
+                                        style={{ padding: '6px 8px', borderRadius: '4px', cursor: 'pointer', marginBottom: '4px', background: '#e8f4e8' }}
+                                        onMouseEnter={e => e.currentTarget.style.background = '#d0ebd0'}
+                                        onMouseLeave={e => e.currentTarget.style.background = '#e8f4e8'}
+                                    >
+                                        {device.name}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
 
                 <div className="modal-buttons">
                     <button onClick={onClose}>Cancel</button>
-                    <button onClick={handleSubmit}>Create</button>
+                    <button onClick={handleSubmit}>{existingGroup ? 'Save' : 'Create'}</button>
                 </div>
             </div>
         </div>
