@@ -6,6 +6,7 @@ import LayoutRenderer from "../components/LayoutRenderer";
 import PropertiesPanel from "../components/PropertiesPanel";
 import "../styles/canvas.css";
 
+const BASE_URL = "https://cs410-digital-signage.onrender.com";
 const SLIDE_ROW_OFFSET = 100;
 
 // ===== Layout Definitions =====
@@ -239,14 +240,14 @@ function Canvas() {
     }
 
     if (layoutIdParam) {
-      fetch(`/api/layouts/${layoutIdParam}`)
+      fetch(`${BASE_URL}/api/layouts/${layoutIdParam}`)
         .then((r) => r.json())
         .then((res) => {
           if (res.data) loadFromLayout(res.data);
         })
         .catch((err) => console.error("Failed to load layout:", err));
     } else {
-      fetch("/api/layouts")
+      fetch(`${BASE_URL}/api/layouts`)
         .then((r) => r.json())
         .then((res) => {
           const layouts = res.data ?? [];
@@ -291,7 +292,7 @@ function Canvas() {
 
             const existingId = existingModules[i];
             if (existingId) {
-              const res = await fetch(`/api/modules/${existingId}`, {
+              const res = await fetch(`${BASE_URL}/api/modules/${existingId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(moduleData),
@@ -304,7 +305,7 @@ function Canvas() {
               return data.data?.id ?? existingId;
             }
 
-            const res = await fetch("/api/modules", {
+            const res = await fetch(`${BASE_URL}/api/modules`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(moduleData),
@@ -321,7 +322,7 @@ function Canvas() {
       }
 
       if (savedLayoutId) {
-        await fetch(`/api/layouts/${savedLayoutId}/slots/all`, {
+        await fetch(`${BASE_URL}/api/layouts/${savedLayoutId}/slots/all`, {
           method: "DELETE",
         });
       }
@@ -359,13 +360,13 @@ function Canvas() {
 
       let layoutRes;
       if (savedLayoutId) {
-        layoutRes = await fetch(`/api/layouts/${savedLayoutId}`, {
+        layoutRes = await fetch(`${BASE_URL}/api/layouts/${savedLayoutId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(layoutBody),
         });
       } else {
-        layoutRes = await fetch("/api/layouts", {
+        layoutRes = await fetch(`${BASE_URL}/api/layouts`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(layoutBody),
