@@ -9,10 +9,10 @@ import Canvas from './pages/Canvas'
 
 function App() {
     return (
-        <BrowserRouter>
+        <BrowserRouter basename="/~hdeblois/cs410/longproj01/t6-DS/">
             <div style={{ display: 'flex', height: '100svh', overflow: 'hidden' }}>
                 <Navbar />
-                <div style={{ flex: 1, overflow: 'hidden' }}>
+                <div style={{ flex: 1, overflow: 'auto' }}>
                     <Routes>
                         {/* Routes to login page first */}
                         <Route path="/" element={<Login />} />
